@@ -1,0 +1,22 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'app.dart';
+import 'providers/finance_provider.dart';
+import 'services/storage_service.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inisialisasi penyimpanan lokal (SharedPreferences)
+  final storageService = await StorageService.init();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => FinanceProvider(storageService)),
+      ],
+      child: const TabunginApp(),
+    ),
+  );
+}
