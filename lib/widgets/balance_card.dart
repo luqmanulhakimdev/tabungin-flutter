@@ -72,7 +72,7 @@ class BalanceCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Total Saldo + Action
+                // Header: Total Balance + Action
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -140,7 +140,7 @@ class BalanceCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
 
-                // Saldo Nominal
+                // Balance Amount
                 Text(
                   CurrencyFormatter.format(currentBalance),
                   style: const TextStyle(
@@ -152,7 +152,7 @@ class BalanceCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // Cashflow Pill: Pemasukan & Pengeluaran Bulan Ini
+                // Cashflow Pill: Monthly Income & Expense
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -161,7 +161,7 @@ class BalanceCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      // Pemasukan
+                      // Income
                       Expanded(
                         child: Row(
                           children: [
@@ -220,7 +220,7 @@ class BalanceCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
 
-                      // Pengeluaran
+                      // Expense
                       Expanded(
                         child: Row(
                           children: [

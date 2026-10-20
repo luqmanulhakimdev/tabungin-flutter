@@ -183,7 +183,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Segmented Type Selector (Pengeluaran / Pemasukan)
+              // Segmented Type Selector (Expense / Income)
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
@@ -214,7 +214,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Nominal Input Field
+              // Amount Input Field
               const Text(
                 'Nominal',
                 style: TextStyle(
@@ -227,6 +227,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               TextFormField(
                 controller: _amountController,
                 keyboardType: TextInputType.number,
+                inputFormatters: [CurrencyInputFormatter()],
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -351,7 +352,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Tanggal Transaksi
+              // Transaction Date
               const Text(
                 'Tanggal',
                 style: TextStyle(
@@ -406,7 +407,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Catatan Opsional
+              // Optional Notes
               const Text(
                 'Catatan (Opsional)',
                 style: TextStyle(
@@ -425,7 +426,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               ),
               const SizedBox(height: 32),
 
-              // Tombol Simpan
+              // Save / Submit Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

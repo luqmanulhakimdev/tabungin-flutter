@@ -69,7 +69,7 @@ class DateFormatter {
     return '$dayName, ${formatFull(date)}';
   }
 
-  /// Menghasilkan sapaan ramah sesuai waktu saat ini
+  /// Generates a friendly Indonesian greeting based on the current local hour
   static String getGreeting() {
     final hour = DateTime.now().hour;
     if (hour >= 4 && hour < 11) {
@@ -83,7 +83,7 @@ class DateFormatter {
     }
   }
 
-  /// Memeriksa apakah dua tanggal berada di bulan dan tahun yang sama
+  /// Checks whether two dates fall in the same month and year
   static bool isSameMonth(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month;
   }

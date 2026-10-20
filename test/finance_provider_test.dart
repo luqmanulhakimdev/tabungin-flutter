@@ -17,8 +17,8 @@ void main() {
     provider = FinanceProvider(storageService);
   });
 
-  group('FinanceProvider - Perhitungan Saldo & Transaksi', () {
-    test('Saldo awal default adalah 0 dan dapat diubah', () async {
+  group('FinanceProvider - Balance Calculations & Transactions', () {
+    test('Initial balance defaults to 0 and can be updated', () async {
       expect(provider.initialBalance, 0.0);
       expect(provider.currentBalance, 0.0);
 
@@ -27,7 +27,7 @@ void main() {
       expect(provider.currentBalance, 500000.0);
     });
 
-    test('Menambahkan transaksi pemasukan dan pengeluaran menghitung saldo dengan benar', () async {
+    test('Adding income and expense transactions calculates balance correctly', () async {
       await provider.updateInitialBalance(1000000.0);
 
       final now = DateTime(2026, 10, 20);
@@ -76,7 +76,7 @@ void main() {
     });
 
     test(
-      'Memperbarui transaksi (Edit) menghitung ulang saldo secara akurat',
+      'Updating transaction (Edit) recalculates balance accurately',
       () async {
         final now = DateTime(2026, 10, 20);
 
@@ -98,7 +98,7 @@ void main() {
         expect(provider.totalLifetimeExpense, 125000.0);
         expect(provider.currentBalance, -125000.0);
 
-        // Edit transaksi dengan ID yang tidak ada mengembalikan false
+        // Editing non-existent ID returns false
         final notFound = transaction.copyWith(id: 'non-existent-id');
         final fail = await provider.updateTransaction(notFound);
         expect(fail, false);
@@ -106,7 +106,7 @@ void main() {
     );
 
     test(
-      'Menghapus transaksi memperbarui daftar dan saldo secara instan',
+      'Deleting transaction updates list and balance immediately',
       () async {
         final now = DateTime(2026, 10, 20);
 
@@ -126,13 +126,13 @@ void main() {
         expect(provider.allTransactions.isEmpty, true);
         expect(provider.totalLifetimeExpense, 0.0);
 
-        // Menghapus ID yang tidak ada mengembalikan false
+        // Deleting non-existent ID returns false
         final failDelete = await provider.deleteTransaction('invalid-id');
         expect(failDelete, false);
       },
     );
 
-    test('Filter bulan dan navigasi previous/next month', () {
+    test('Filter month and navigate previous/next month', () {
       final initialMonth = DateTime(2026, 5);
       provider.setFilterMonth(initialMonth);
       expect(provider.selectedFilterMonth.month, 5);
@@ -147,7 +147,7 @@ void main() {
       expect(provider.selectedFilterMonth.month, 6);
     });
 
-    test('Filter tipe transaksi (semua, pemasukan, pengeluaran)', () async {
+    test('Filter transaction type (all, income, expense)', () async {
       final now = DateTime(2026, 10, 20);
       provider.setFilterMonth(now);
 
@@ -172,23 +172,23 @@ void main() {
         ),
       );
 
-      // Semua
+      // All
       provider.setTypeFilter(null);
       expect(provider.filteredTransactions.length, 2);
 
-      // Pemasukan
+      // Income
       provider.setTypeFilter(TransactionType.income);
       expect(provider.filteredTransactions.length, 1);
       expect(provider.filteredTransactions.first.id, 'inc-f');
 
-      // Pengeluaran
+      // Expense
       provider.setTypeFilter(TransactionType.expense);
       expect(provider.filteredTransactions.length, 1);
       expect(provider.filteredTransactions.first.id, 'exp-f');
     });
 
     test(
-      'recentTransactions membatasi maksimal 5 data transaksi terbaru',
+      'recentTransactions limits list to 5 newest transactions',
       () async {
         final now = DateTime(2026, 10, 20);
         for (int i = 1; i <= 7; i++) {
@@ -206,16 +206,16 @@ void main() {
 
         expect(provider.allTransactions.length, 7);
         expect(provider.recentTransactions.length, 5);
-        // Urutan pertama adalah yang paling baru (tx-7)
+        // First item is the most recent (tx-7)
         expect(provider.recentTransactions.first.id, 'tx-7');
       },
     );
 
-    test('Ringkasan pengeluaran dan pemasukan per kategori dikelompokkan dengan benar', () async {
+    test('Category breakdowns for expense and income are grouped and sorted correctly', () async {
       final now = DateTime(2026, 10, 20);
       provider.setFilterMonth(now);
 
-      // Pengeluaran
+      // Expense
       await provider.addTransaction(
         TransactionModel(
           id: '1',
@@ -247,7 +247,7 @@ void main() {
         ),
       );
 
-      // Pemasukan
+      // Income
       await provider.addTransaction(
         TransactionModel(
           id: '4',
@@ -280,7 +280,7 @@ void main() {
       expect(incBreakdown.keys.first, 'inc_salary');
     });
 
-    test('clearAllData mengosongkan seluruh data state dan storage', () async {
+    test('clearAllData clears all state and storage data', () async {
       await provider.updateInitialBalance(100000);
       await provider.addTransaction(
         TransactionModel(
@@ -303,7 +303,7 @@ void main() {
     });
 
     test(
-      'StorageService menangani JSON rusak tanpa melempar exception',
+      'StorageService handles corrupted JSON gracefully without throwing exceptions',
       () async {
         SharedPreferences.setMockInitialValues({
           'tabungin_transactions': 'invalid-corrupted-json-content',

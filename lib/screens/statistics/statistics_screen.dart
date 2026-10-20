@@ -62,7 +62,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     icon: Icons.bar_chart_rounded,
                   )
                 else ...[
-                  // 3 Ringkasan Card: Pemasukan, Pengeluaran, Selisih
+                  // 3 Summary Cards: Income, Expense, Net Savings
                   Row(
                     children: [
                       Expanded(
@@ -88,7 +88,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Net Savings Card (Selisih)
+                  // Net Savings Card (Surplus / Deficit)
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -166,7 +166,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Perbandingan Visual Pemasukan & Pengeluaran
+                  // Visual Comparison: Income vs Expense
                   const Text(
                     'Perbandingan Arus Kas',
                     style: TextStyle(
@@ -179,7 +179,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   _buildComparisonBar(monthlyIncome, monthlyExpense),
                   const SizedBox(height: 28),
 
-                  // Kategori Breakdown Section Header & Toggle
+                  // Category Breakdown Header & Toggle
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -194,7 +194,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // Toggle Pengeluaran / Pemasukan
+                      // Expense / Income Toggle
                       Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(

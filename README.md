@@ -2,12 +2,12 @@
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.47.7-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.13.5-0175C2?logo=dart&logoColor=white)](https://dart.dev)
-[![Test Coverage](https://img.shields.io/badge/Coverage-94.03%25-brightgreen)](file:///coverage/lcov.info)
-[![Tests Passed](https://img.shields.io/badge/Tests-37%20Passed-success)]()
+[![Test Coverage](https://img.shields.io/badge/Coverage-94.13%25-brightgreen)](file:///coverage/lcov.info)
+[![Tests Passed](https://img.shields.io/badge/Tests-44%20Passed-success)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-blue)]()
 
-**Tabungin** is a modern, lightweight, and offline-first personal finance tracking mobile application built with **Flutter** and **Dart**. Designed with modern **Material Design 3** aesthetics, robust state management, and an enterprise-grade automated test suite boasting **94.03% code coverage**, Tabungin provides users with an intuitive, clutter-free way to record transactions, monitor cashflow health, and visualize monthly spending patterns.
+**Tabungin** is a modern, lightweight, and offline-first personal finance tracking mobile application built with **Flutter** and **Dart**. Designed with modern **Material Design 3** aesthetics, robust state management, and an enterprise-grade automated test suite boasting **94.13% code coverage**, Tabungin provides users with an intuitive, clutter-free way to record transactions, monitor cashflow health, and visualize monthly spending patterns.
 
 ---
 
@@ -22,7 +22,7 @@
   - [5. Unified Navigation](#5-unified-navigation)
 - [Architecture & Technical Decisions](#-architecture--technical-decisions)
 - [Project Directory Structure](#-project-directory-structure)
-- [Automated Testing & Coverage Report (94.03%)](#-automated-testing--coverage-report-9403)
+- [Automated Testing & Coverage Report (94.13%)](#-automated-testing--coverage-report-9413)
 - [Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation & Setup](#installation--setup)
@@ -43,7 +43,7 @@
 - **Material Design 3 Craftsmanship**: Curated typography, emerald green gradients, rounded containers (16–24px), subtle drop shadows, and zero layout overflows across various screen sizes.
 - **Indonesian Currency & Date Localization**: Preconfigured with standard Indonesian Rupiah currency formatting (`Rp1.250.000`) and localized date representations (`Selasa, 20 Oktober 2026`).
 - **Clean Layered Architecture**: Strictly decouples UI widgets from business logic and storage abstractions, allowing seamless database migrations in future releases.
-- **Battle-Tested Reliability**: Covered by 37 unit and widget tests achieving **94.03% line coverage** and zero lint warnings (`flutter analyze`).
+- **Battle-Tested Reliability**: Covered by 44 unit and widget tests achieving **94.13% line coverage** and zero lint warnings (`flutter analyze`).
 
 ---
 
@@ -81,6 +81,7 @@ The application's visual identity centers around **Emerald Green**, instilling t
 
 ### 2. Add & Edit Transactions
 - **Segmented Type Toggle**: Seamless switching between *Expense* (`Pengeluaran`) and *Income* (`Pemasukan`).
+- **Real-Time Currency Formatter**: Auto-formats nominal inputs with Indonesian thousand separator dots (`.`) dynamically while typing (e.g. `100000` -> `100.000`) while preserving intuitive cursor position and backspace behavior.
 - **Numerical Keyboard with Validation**: Real-time validation preventing negative, empty, or zero-value submissions.
 - **Categorization Grid**: Quick visual selection with unique category iconography:
   - *Expense Categories*: Food & Beverage, Transportation, Shopping, Bills & Utilities, Entertainment, Healthcare, Education, Others.
@@ -165,9 +166,9 @@ lib/
 
 ---
 
-## 🧪 Automated Testing & Coverage Report (94.03%)
+## 🧪 Automated Testing & Coverage Report (94.13%)
 
-The test suite covers **37 rigorous test cases** across business logic, models, utility formatters, and widget interactions.
+The test suite covers **44 rigorous test cases** across business logic, models, utility formatters, and widget interactions.
 
 ### Detailed Code Coverage Breakdown:
 
@@ -178,7 +179,7 @@ The test suite covers **37 rigorous test cases** across business logic, models, 
 | `lib/models/transaction_model.dart` | 39 | 38 | **97.4%** | Passed ✅ |
 | `lib/providers/finance_provider.dart` | 121 | 120 | **99.2%** | Passed ✅ |
 | `lib/services/storage_service.dart` | 24 | 21 | **87.5%** | Passed ✅ |
-| `lib/utils/currency_formatter.dart` | 19 | 18 | **94.7%** | Passed ✅ |
+| `lib/utils/currency_formatter.dart` | 53 | 52 | **98.1%** | Passed ✅ |
 | `lib/utils/date_formatter.dart` | 24 | 23 | **95.8%** | Passed ✅ |
 | `lib/widgets/balance_card.dart` | 84 | 84 | **100.0%** | Passed ✅ |
 | `lib/widgets/confirm_dialog.dart` | 37 | 37 | **100.0%** | Passed ✅ |
@@ -187,17 +188,17 @@ The test suite covers **37 rigorous test cases** across business logic, models, 
 | `lib/widgets/transaction_card.dart` | 44 | 44 | **100.0%** | Passed ✅ |
 | `lib/screens/main_navigation_screen.dart` | 20 | 20 | **100.0%** | Passed ✅ |
 | `lib/screens/statistics/statistics_screen.dart` | 173 | 166 | **96.0%** | Passed ✅ |
-| `lib/screens/transactions/add_edit_transaction_screen.dart` | 159 | 146 | **91.8%** | Passed ✅ |
+| `lib/screens/transactions/add_edit_transaction_screen.dart` | 160 | 147 | **91.9%** | Passed ✅ |
 | `lib/screens/transactions/transaction_list_screen.dart` | 122 | 109 | **89.3%** | Passed ✅ |
-| `lib/screens/home/home_screen.dart` | 165 | 138 | **83.6%** | Passed ✅ |
+| `lib/screens/home/home_screen.dart` | 166 | 139 | **83.7%** | Passed ✅ |
 | `lib/theme/app_theme.dart` | 35 | 34 | **97.1%** | Passed ✅ |
-| `lib/app.dart` | 4 | 4 | **100.0%** | Passed ✅ |
-| **TOTAL SUITE** | **1173** | **1103** | **94.03%** | **Target Met (>80%)** 🏆 |
+| `lib/app.dart` | 4 | 3 | **75.0%** | Passed ✅ |
+| **TOTAL SUITE** | **1207** | **1138** | **94.13%** | **Target Met (>80%)** 🏆 |
 
 ### Test Suites Included:
 - **[`test/finance_provider_test.dart`](file:///home/luqmanul/Codes/Flutter/Personal/tabungin-flutter/test/finance_provider_test.dart)**: Unit tests for baseline balance, transaction CRUD operations, month filtering, category breakdown aggregation, recent transaction cap, and corrupted storage recovery.
 - **[`test/models_test.dart`](file:///home/luqmanul/Codes/Flutter/Personal/tabungin-flutter/test/models_test.dart)**: Model serialization, `copyWith`, equality operators (`==`), and category fallback resolution.
-- **[`test/formatter_test.dart`](file:///home/luqmanul/Codes/Flutter/Personal/tabungin-flutter/test/formatter_test.dart)**: Indonesian Rupiah formatting/parsing and calendar dates.
+- **[`test/formatter_test.dart`](file:///home/luqmanul/Codes/Flutter/Personal/tabungin-flutter/test/formatter_test.dart)**: Indonesian Rupiah formatting/parsing, real-time input formatting, and calendar dates.
 - **[`test/widgets_test.dart`](file:///home/luqmanul/Codes/Flutter/Personal/tabungin-flutter/test/widgets_test.dart)**: Component tests for `TransactionCard`, `BalanceCard`, `ConfirmDialog`, `MonthSelectorBar`, and `EmptyStateWidget`.
 - **[`test/screens_test.dart`](file:///home/luqmanul/Codes/Flutter/Personal/tabungin-flutter/test/screens_test.dart)**: Integration widget tests for navigation, dialogs, form validation, filter chips, and bottom sheets.
 
@@ -242,7 +243,7 @@ flutter run
 # Verify static code analysis (zero lint issues)
 flutter analyze
 
-# Execute all 37 test cases
+# Execute all 44 test cases
 flutter test
 
 # Generate lcov coverage file

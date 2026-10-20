@@ -56,6 +56,7 @@ class HomeScreen extends StatelessWidget {
               TextField(
                 controller: controller,
                 keyboardType: TextInputType.number,
+                inputFormatters: [CurrencyInputFormatter()],
                 autofocus: true,
                 decoration: const InputDecoration(
                   prefixText: 'Rp ',
@@ -323,7 +324,7 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header Sapaan Pengguna
+                    // User Greeting Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -388,7 +389,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 18),
 
-                    // Total Saldo Card
+                    // Total Balance Card
                     BalanceCard(
                       currentBalance: finance.currentBalance,
                       monthlyIncome: finance.monthlyIncome,
@@ -398,7 +399,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 18),
 
-                    // Ringkasan Arus Kas Bulan Ini (Cashflow Status)
+                    // Monthly Cashflow Status Banner
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -462,7 +463,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    // Section Transaksi Terbaru
+                    // Recent Transactions Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -502,7 +503,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
 
-                    // Daftar Transaksi atau Empty State
+                    // Recent Transactions List or Empty State
                     if (!hasTransactions)
                       EmptyStateWidget(
                         title: 'Belum Ada Transaksi',

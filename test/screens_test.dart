@@ -41,7 +41,7 @@ void main() {
   }
 
   group('AddEditTransactionScreen Tests', () {
-    testWidgets('Validasi form saat nominal kosong atau 0', (
+    testWidgets('Form validation when amount is empty or zero', (
       WidgetTester tester,
     ) async {
       setMobileScreen(tester);
@@ -59,7 +59,7 @@ void main() {
       expect(find.text('Nominal tidak boleh kosong'), findsOneWidget);
     });
 
-    testWidgets('Menambah transaksi baru berhasil tersimpan ke provider', (
+    testWidgets('Adding new transaction saves successfully to provider', (
       WidgetTester tester,
     ) async {
       setMobileScreen(tester);
@@ -67,26 +67,27 @@ void main() {
         buildTestableWidget(const AddEditTransactionScreen()),
       );
 
-      // Ganti tipe ke Pemasukan
+      // Switch type to Income
       await tester.tap(find.text('Pemasukan'));
       await tester.pumpAndSettle();
 
-      // Pilih kategori Gaji
+      // Select Salary category
       await tester.tap(find.text('Gaji'));
       await tester.pumpAndSettle();
 
-      // Masukkan nominal
+      // Enter amount
       await tester.enterText(find.byType(TextFormField).first, '5000000');
       await tester.pumpAndSettle();
+      expect(find.text('5.000.000'), findsOneWidget);
 
-      // Masukkan catatan
+      // Enter notes
       await tester.enterText(
         find.byType(TextFormField).last,
         'Gaji Proyek Flutter',
       );
       await tester.pumpAndSettle();
 
-      // Tap Simpan Transaksi
+      // Tap Save Transaction
       await tester.ensureVisible(find.text('Simpan Transaksi'));
       await tester.tap(find.text('Simpan Transaksi'));
       await tester.pumpAndSettle();
@@ -99,7 +100,7 @@ void main() {
       expect(saved.notes, 'Gaji Proyek Flutter');
     });
 
-    testWidgets('Edit transaksi memuat data lama dan menyimpan perubahan', (
+    testWidgets('Edit transaction loads previous data and persists modifications', (
       WidgetTester tester,
     ) async {
       setMobileScreen(tester);
@@ -123,18 +124,18 @@ void main() {
       expect(find.text('Edit Transaksi'), findsOneWidget);
       expect(find.text('Perbarui Transaksi'), findsOneWidget);
 
-      // Ganti nominal
+      // Change amount
       await tester.enterText(find.byType(TextFormField).first, '250000');
       await tester.pumpAndSettle();
 
-      // Ganti catatan
+      // Change notes
       await tester.enterText(
         find.byType(TextFormField).last,
         'Makan siang baru',
       );
       await tester.pumpAndSettle();
 
-      // Tap Perbarui Transaksi
+      // Tap Update Transaction
       await tester.ensureVisible(find.text('Perbarui Transaksi'));
       await tester.tap(find.text('Perbarui Transaksi'));
       await tester.pumpAndSettle();
@@ -145,7 +146,7 @@ void main() {
   });
 
   group('HomeScreen Tests', () {
-    testWidgets('Menampilkan ringkasan saldo, sapaan, dan modal saldo awal', (
+    testWidgets('Displays balance summary, greeting, and initial balance modal', (
       WidgetTester tester,
     ) async {
       setMobileScreen(tester);
@@ -157,13 +158,15 @@ void main() {
       expect(find.text('Total Saldo'), findsOneWidget);
       expect(find.text('Belum Ada Transaksi'), findsOneWidget);
 
-      // Tap Saldo Awal untuk buka dialog
+      // Tap Initial Balance to open dialog
       await tester.tap(find.text('Saldo Awal'));
       await tester.pumpAndSettle();
 
       expect(find.text('Atur Saldo Awal'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), '2000000');
+      await tester.pumpAndSettle();
+      expect(find.text('2.000.000'), findsOneWidget);
       await tester.tap(find.text('Simpan'));
       await tester.pumpAndSettle();
 
@@ -172,7 +175,7 @@ void main() {
     });
 
     testWidgets(
-      'Menampilkan daftar transaksi terbaru dan membuka detail sheet',
+      'Displays recent transactions list and opens detail sheet',
       (WidgetTester tester) async {
         setMobileScreen(tester);
         bool navigated = false;
@@ -196,11 +199,11 @@ void main() {
         expect(find.text('Makanan & Minuman'), findsOneWidget);
         expect(find.text('Bakso Malang'), findsOneWidget);
 
-        // Tap Lihat Semua
+        // Tap See All
         await tester.tap(find.text('Lihat Semua'));
         expect(navigated, true);
 
-        // Tap transaksi untuk buka detail bottom sheet
+        // Tap transaction to open bottom sheet detail
         await tester.tap(find.text('Makanan & Minuman'));
         await tester.pumpAndSettle();
 
@@ -214,7 +217,7 @@ void main() {
 
   group('TransactionListScreen Tests', () {
     testWidgets(
-      'Filter chip jenis transaksi dan hapus transaksi dengan konfirmasi',
+      'Filter transaction type chips and delete transaction with confirmation',
       (WidgetTester tester) async {
         setMobileScreen(tester);
         final now = DateTime.now();
@@ -244,7 +247,7 @@ void main() {
         expect(find.text('Gaji'), findsOneWidget);
         expect(find.text('Makanan & Minuman'), findsOneWidget);
 
-        // Filter Pemasukan via chip (menggunakan ancestor InkWell dengan teks Pemasukan)
+        // Filter Income via chip
         final filterIncomeChip = find
             .ancestor(
               of: find.text('Pemasukan'),
@@ -257,7 +260,7 @@ void main() {
         expect(find.text('Gaji'), findsOneWidget);
         expect(find.text('Makanan & Minuman'), findsNothing);
 
-        // Filter Pengeluaran
+        // Filter Expense via chip
         final filterExpenseChip = find
             .ancestor(
               of: find.text('Pengeluaran'),
@@ -270,20 +273,20 @@ void main() {
         expect(find.text('Gaji'), findsNothing);
         expect(find.text('Makanan & Minuman'), findsOneWidget);
 
-        // Buka detail sheet pengeluaran
+        // Open expense detail sheet
         await tester.tap(find.text('Makanan & Minuman'));
         await tester.pumpAndSettle();
 
         expect(find.text('Edit Transaksi'), findsOneWidget);
         expect(find.text('Hapus'), findsOneWidget);
 
-        // Tap Hapus -> Muncul Dialog Konfirmasi
+        // Tap Delete -> Confirmation dialog appears
         await tester.tap(find.text('Hapus'));
         await tester.pumpAndSettle();
 
         expect(find.text('Hapus Transaksi?'), findsOneWidget);
 
-        // Konfirmasi Hapus
+        // Confirm Delete
         await tester.tap(find.widgetWithText(ElevatedButton, 'Hapus'));
         await tester.pumpAndSettle();
 
@@ -295,7 +298,7 @@ void main() {
 
   group('StatisticsScreen Tests', () {
     testWidgets(
-      'Menampilkan metrik finansial, bar perbandingan, dan toggle kategori',
+      'Displays financial metrics, comparison bar, and category toggle',
       (WidgetTester tester) async {
         setMobileScreen(tester);
         final now = DateTime.now();
@@ -327,7 +330,7 @@ void main() {
         expect(find.text('Distribusi Kategori'), findsOneWidget);
         expect(find.text('Makanan & Minuman'), findsOneWidget);
 
-        // Toggle ke Pemasukan
+        // Toggle to Income
         final incomeToggle = find
             .ancestor(
               of: find.text('Pemasukan'),
@@ -343,7 +346,7 @@ void main() {
   });
 
   group('MainNavigationScreen Tests', () {
-    testWidgets('Navigasi antar tab dan tombol FAB tambah transaksi', (
+    testWidgets('Navigation across bottom tabs and floating action button', (
       WidgetTester tester,
     ) async {
       setMobileScreen(tester);
@@ -353,12 +356,12 @@ void main() {
 
       expect(find.text('Tabungin'), findsOneWidget);
 
-      // Switch ke Transaksi
+      // Switch to Transactions tab
       await tester.tap(find.byIcon(Icons.receipt_long_outlined));
       await tester.pumpAndSettle();
       expect(find.text('Riwayat Transaksi'), findsOneWidget);
 
-      // Switch ke Statistik
+      // Switch to Statistics tab
       await tester.tap(find.byIcon(Icons.pie_chart_outline_rounded));
       await tester.pumpAndSettle();
       expect(find.text('Ringkasan Statistik'), findsOneWidget);

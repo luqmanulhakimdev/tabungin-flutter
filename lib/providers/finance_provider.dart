@@ -5,8 +5,8 @@ import '../models/transaction_type.dart';
 import '../services/storage_service.dart';
 import '../utils/date_formatter.dart';
 
-/// Provider utama untuk mengelola state keuangan, transaksi, dan kalkulasi saldo.
-/// Menggunakan ChangeNotifier yang merupakan arsitektur bawaan Flutter yang bersih dan reaktif.
+/// Primary provider managing financial state, transactions, and balance calculations.
+/// Built upon Flutter's native ChangeNotifier for clean, reactive state management.
 class FinanceProvider extends ChangeNotifier {
   final StorageService _storageService;
 
@@ -31,7 +31,7 @@ class FinanceProvider extends ChangeNotifier {
   DateTime get selectedFilterMonth => _selectedFilterMonth;
   TransactionType? get selectedTypeFilter => _selectedTypeFilter;
 
-  /// Memuat data dari local storage
+  /// Load data from local storage
   void _loadData() {
     _isLoading = true;
     notifyListeners();
@@ -44,7 +44,7 @@ class FinanceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Mengurutkan transaksi dari tanggal terbaru ke terlama
+  /// Sort transactions in descending chronological order (newest first)
   void _sortTransactions() {
     _transactions.sort((a, b) {
       final dateComparison = b.date.compareTo(a.date);
@@ -53,28 +53,28 @@ class FinanceProvider extends ChangeNotifier {
     });
   }
 
-  // --- Kalkulasi Keuangan ---
+  // --- Financial Calculations ---
 
-  /// Total seluruh pemasukan sepanjang waktu
+  /// Lifetime total income across all recorded history
   double get totalLifetimeIncome {
     return _transactions
         .where((t) => t.isIncome)
         .fold(0.0, (sum, t) => sum + t.amount);
   }
 
-  /// Total seluruh pengeluaran sepanjang waktu
+  /// Lifetime total expenses across all recorded history
   double get totalLifetimeExpense {
     return _transactions
         .where((t) => t.isExpense)
         .fold(0.0, (sum, t) => sum + t.amount);
   }
 
-  /// Total Saldo Saat Ini = Saldo Awal + Seluruh Pemasukan - Seluruh Pengeluaran
+  /// Current Net Balance = Initial Balance + Lifetime Income - Lifetime Expenses
   double get currentBalance {
     return _initialBalance + totalLifetimeIncome - totalLifetimeExpense;
   }
 
-  /// Total Pemasukan untuk bulan yang sedang difilter
+  /// Total income for the currently selected filter month
   double get monthlyIncome {
     return _transactions
         .where(
@@ -85,7 +85,7 @@ class FinanceProvider extends ChangeNotifier {
         .fold(0.0, (sum, t) => sum + t.amount);
   }
 
-  /// Total Pengeluaran untuk bulan yang sedang difilter
+  /// Total expenses for the currently selected filter month
   double get monthlyExpense {
     return _transactions
         .where(
@@ -96,12 +96,12 @@ class FinanceProvider extends ChangeNotifier {
         .fold(0.0, (sum, t) => sum + t.amount);
   }
 
-  /// Selisih bersih bulan ini (Surplus / Defisit)
+  /// Net monthly savings cashflow (Surplus / Deficit)
   double get monthlyNetSavings {
     return monthlyIncome - monthlyExpense;
   }
 
-  /// 5 Transaksi terbaru untuk tampilan ringkas di Dashboard
+  /// 5 most recent transactions for the dashboard preview
   List<TransactionModel> get recentTransactions {
     if (_transactions.length <= 5) {
       return List.unmodifiable(_transactions);
@@ -109,7 +109,7 @@ class FinanceProvider extends ChangeNotifier {
     return List.unmodifiable(_transactions.sublist(0, 5));
   }
 
-  /// Transaksi yang sudah disaring berdasarkan bulan & jenis transaksi
+  /// Transactions filtered by active month and transaction type
   List<TransactionModel> get filteredTransactions {
     return _transactions.where((t) {
       final matchesMonth = DateFormatter.isSameMonth(
@@ -125,7 +125,7 @@ class FinanceProvider extends ChangeNotifier {
     }).toList();
   }
 
-  /// Ringkasan pengeluaran per kategori pada bulan yang dipilih
+  /// Expense breakdown grouped by category for the active month
   Map<String, double> get categoryExpenseBreakdown {
     final Map<String, double> breakdown = {};
 
@@ -136,14 +136,14 @@ class FinanceProvider extends ChangeNotifier {
       }
     }
 
-    // Urutkan dari pengeluaran terbesar
+    // Sort by largest expense amount descending
     final sortedEntries = breakdown.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
     return Map.fromEntries(sortedEntries);
   }
 
-  /// Ringkasan pemasukan per kategori pada bulan yang dipilih
+  /// Income breakdown grouped by category for the active month
   Map<String, double> get categoryIncomeBreakdown {
     final Map<String, double> breakdown = {};
 
@@ -154,15 +154,16 @@ class FinanceProvider extends ChangeNotifier {
       }
     }
 
+    // Sort by largest income amount descending
     final sortedEntries = breakdown.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
     return Map.fromEntries(sortedEntries);
   }
 
-  // --- Operasi CRUD Transaksi ---
+  // --- Transaction CRUD Operations ---
 
-  /// Menambahkan transaksi baru
+  /// Add a new transaction record
   Future<bool> addTransaction(TransactionModel transaction) async {
     _transactions.add(transaction);
     _sortTransactions();
@@ -172,7 +173,7 @@ class FinanceProvider extends ChangeNotifier {
     return success;
   }
 
-  /// Mengedit transaksi yang sudah ada
+  /// Update an existing transaction record
   Future<bool> updateTransaction(TransactionModel updatedTransaction) async {
     final index = _transactions.indexWhere(
       (t) => t.id == updatedTransaction.id,
@@ -187,7 +188,7 @@ class FinanceProvider extends ChangeNotifier {
     return success;
   }
 
-  /// Menghapus transaksi berdasarkan ID
+  /// Delete a transaction record by its ID
   Future<bool> deleteTransaction(String transactionId) async {
     final index = _transactions.indexWhere((t) => t.id == transactionId);
     if (index == -1) return false;
@@ -199,14 +200,14 @@ class FinanceProvider extends ChangeNotifier {
     return success;
   }
 
-  /// Memperbarui saldo awal
+  /// Update initial baseline balance
   Future<bool> updateInitialBalance(double balance) async {
     _initialBalance = balance;
     notifyListeners();
     return await _storageService.saveInitialBalance(balance);
   }
 
-  // --- Operasi Filter & Navigasi Tanggal ---
+  // --- Filter & Date Navigation Operations ---
 
   void setFilterMonth(DateTime month) {
     _selectedFilterMonth = DateTime(month.year, month.month);
@@ -234,7 +235,7 @@ class FinanceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Membersihkan seluruh data
+  /// Reset and clear all stored transaction and balance data
   Future<void> clearAllData() async {
     _transactions.clear();
     _initialBalance = 0.0;

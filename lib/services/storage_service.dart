@@ -4,13 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/transaction_model.dart';
 
-/// Service untuk menangani penyimpanan data transaksi secara lokal di perangkat.
+/// Service handling local data persistence for transactions and balances.
 ///
-/// **Alasan Memilih SharedPreferences untuk Pemula:**
-/// 1. Sangat stabil & resmi dari tim Flutter (`shared_preferences`).
-/// 2. Tidak memerlukan konfigurasi database native yang rumit (tidak perlu NDK atau migrasi tabel SQLite).
-/// 3. Data disimpan dalam bentuk JSON String yang mudah dipahami alur serialisasinya (`toJson` & `fromJson`).
-/// 4. Sangat andal dan cepat untuk kebutuhan aplikasi pencatat keuangan skala personal/MVP.
+/// **Design Rationale for SharedPreferences:**
+/// 1. Stable, official package directly maintained by the Flutter team (`shared_preferences`).
+/// 2. Requires zero native database dependencies or migration scripts.
+/// 3. Data is persisted as a JSON string, providing a transparent serialization pipeline (`toJson` & `fromJson`).
+/// 4. Lightweight, fast, and resilient for offline-first personal finance tracking.
 class StorageService {
   static const String _transactionsKey = 'tabungin_transactions';
   static const String _initialBalanceKey = 'tabungin_initial_balance';
@@ -19,13 +19,13 @@ class StorageService {
 
   StorageService(this._prefs);
 
-  /// Inisialisasi instance SharedPreferences
+  /// Initialize SharedPreferences instance
   static Future<StorageService> init() async {
     final prefs = await SharedPreferences.getInstance();
     return StorageService(prefs);
   }
 
-  /// Memuat daftar semua transaksi dari penyimpanan lokal
+  /// Load all transactions from local storage
   List<TransactionModel> loadTransactions() {
     final rawJson = _prefs.getString(_transactionsKey);
     if (rawJson == null || rawJson.isEmpty) {
@@ -40,29 +40,29 @@ class StorageService {
           )
           .toList();
     } catch (e) {
-      // Jika terjadi kesalahan parsing, kembalikan daftar kosong
+      // In case of parsing corruption, return an empty list gracefully
       return [];
     }
   }
 
-  /// Menyimpan daftar transaksi ke penyimpanan lokal
+  /// Persist transactions list to local storage
   Future<bool> saveTransactions(List<TransactionModel> transactions) async {
     final listMap = transactions.map((t) => t.toJson()).toList();
     final jsonString = jsonEncode(listMap);
     return await _prefs.setString(_transactionsKey, jsonString);
   }
 
-  /// Memuat saldo awal pengguna (jika ada)
+  /// Load user's initial balance (if set)
   double loadInitialBalance() {
     return _prefs.getDouble(_initialBalanceKey) ?? 0.0;
   }
 
-  /// Menyimpan saldo awal pengguna
+  /// Save user's initial balance
   Future<bool> saveInitialBalance(double balance) async {
     return await _prefs.setDouble(_initialBalanceKey, balance);
   }
 
-  /// Menghapus seluruh data lokal (untuk pengujian atau reset)
+  /// Clear all persisted data (used for testing and data resets)
   Future<bool> clearAll() async {
     await _prefs.remove(_transactionsKey);
     await _prefs.remove(_initialBalanceKey);

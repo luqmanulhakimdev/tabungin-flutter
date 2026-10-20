@@ -239,7 +239,7 @@ class TransactionListScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
 
-                    // Filter Chips: Semua, Pemasukan, Pengeluaran
+                    // Filter Chips: All, Income, Expense
                     Row(
                       children: [
                         _buildFilterChip(

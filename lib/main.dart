@@ -8,7 +8,7 @@ import 'services/storage_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inisialisasi penyimpanan lokal (SharedPreferences)
+  // Initialize local storage (SharedPreferences)
   final storageService = await StorageService.init();
 
   runApp(

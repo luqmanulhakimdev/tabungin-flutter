@@ -89,19 +89,19 @@ void main() {
       ),
     );
 
-    // Buka Dialog
+    // Open Dialog
     await tester.tap(find.text('Buka Dialog'));
     await tester.pumpAndSettle();
 
     expect(find.text('Hapus Item'), findsOneWidget);
     expect(find.text('Yakin ingin menghapus item ini?'), findsOneWidget);
 
-    // Tap Batal
+    // Tap Cancel
     await tester.tap(find.text('Batal'));
     await tester.pumpAndSettle();
     expect(result, false);
 
-    // Buka lagi dan tap Hapus
+    // Re-open and tap Delete
     await tester.tap(find.text('Buka Dialog'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Hapus'));

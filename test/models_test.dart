@@ -6,7 +6,7 @@ import 'package:tabungin_flutter/models/transaction_type.dart';
 
 void main() {
   group('TransactionType Tests', () {
-    test('Verifikasi label, warna, subtleColor, dan icon', () {
+    test('Verifies label, color, subtleColor, and icon properties', () {
       expect(TransactionType.income.label, 'Pemasukan');
       expect(TransactionType.expense.label, 'Pengeluaran');
 
@@ -20,7 +20,7 @@ void main() {
       expect(TransactionType.expense.icon, Icons.arrow_upward_rounded);
     });
 
-    test('fromString konversi teks bahasa Inggris dan Indonesia', () {
+    test('fromString converts English and Indonesian string values', () {
       expect(TransactionType.fromString('income'), TransactionType.income);
       expect(TransactionType.fromString('pemasukan'), TransactionType.income);
       expect(TransactionType.fromString('expense'), TransactionType.expense);
@@ -33,7 +33,7 @@ void main() {
   });
 
   group('CategoryModel Tests', () {
-    test('Default kategori pengeluaran dan pemasukan tersedia', () {
+    test('Default expense and income categories are available', () {
       expect(CategoryModel.defaultExpenseCategories.isNotEmpty, true);
       expect(CategoryModel.defaultIncomeCategories.isNotEmpty, true);
       expect(
@@ -44,7 +44,7 @@ void main() {
     });
 
     test(
-      'getById menemukan kategori yang tepat atau mengembalikan fallback',
+      'getById finds existing categories or returns fallback category',
       () {
         final food = CategoryModel.getById('exp_food');
         expect(food.id, 'exp_food');
@@ -62,7 +62,7 @@ void main() {
       },
     );
 
-    test('toJson dan fromJson bekerja konsisten', () {
+    test('toJson and fromJson serialize and deserialize consistently', () {
       final category = CategoryModel.defaultExpenseCategories.first;
       final json = category.toJson();
       expect(json['id'], category.id);
@@ -104,7 +104,7 @@ void main() {
       expect(copied.categoryId, tx.categoryId);
     });
 
-    test('toJson dan fromJson serialization', () {
+    test('toJson and fromJson serialization', () {
       final tx = TransactionModel(
         id: 'tx-json',
         amount: 500000.0,
@@ -129,7 +129,7 @@ void main() {
       expect(restored.notes, tx.notes);
     });
 
-    test('operator == dan hashCode', () {
+    test('operator == and hashCode based on entity ID', () {
       final tx1 = TransactionModel(
         id: 'same-id',
         amount: 10000.0,

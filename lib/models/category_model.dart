@@ -26,7 +26,7 @@ class CategoryModel {
     return getById(id);
   }
 
-  /// Kategori bawaan Pengeluaran
+  /// Default expense categories
   static const List<CategoryModel> defaultExpenseCategories = [
     CategoryModel(
       id: 'exp_food',
@@ -86,7 +86,7 @@ class CategoryModel {
     ),
   ];
 
-  /// Kategori bawaan Pemasukan
+  /// Default income categories
   static const List<CategoryModel> defaultIncomeCategories = [
     CategoryModel(
       id: 'inc_salary',
