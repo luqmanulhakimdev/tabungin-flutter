@@ -11,7 +11,16 @@
 
 ---
 
+## 📱 App Screenshots
+
+| Dashboard | Statistics | Add Transaction | Income Form | Expense Form |
+| :---: | :---: | :---: | :---: | :---: |
+| <img src="screenshots/dashboard.jpg" width="180" alt="Dashboard Screen"/> | <img src="screenshots/statistics.jpg" width="180" alt="Statistics Screen"/> | <img src="screenshots/add_transaction.jpg" width="180" alt="Add Transaction Screen"/> | <img src="screenshots/transaction_income.jpg" width="180" alt="Income Form"/> | <img src="screenshots/transaction_expense.jpg" width="180" alt="Expense Form"/> |
+
+---
+
 ## 📑 Table of Contents
+- [App Screenshots](#-app-screenshots)
 - [Key Highlights](#-key-highlights)
 - [UI/UX & Design System](#-uiux--design-system)
 - [Feature Overview](#-feature-overview)
@@ -20,6 +29,7 @@
   - [3. Transaction History & Filtering](#3-transaction-history--filtering)
   - [4. Financial Analytics & Statistics](#4-financial-analytics--statistics)
   - [5. Unified Navigation](#5-unified-navigation)
+  - [6. Light & Dark Mode](#6-light--dark-mode)
 - [Architecture & Technical Decisions](#-architecture--technical-decisions)
 - [Project Directory Structure](#-project-directory-structure)
 - [Automated Testing & Coverage Report (94.13%)](#-automated-testing--coverage-report-9413)
@@ -104,6 +114,11 @@ The application's visual identity centers around **Emerald Green**, instilling t
 ### 5. Unified Navigation
 - **Material 3 Navigation Bar**: Quick switching across *Dashboard*, *Transactions*, and *Statistics*.
 - **Floating Action Button (FAB)**: Prominent emerald action trigger for instant logging from any primary tab.
+
+### 6. Light & Dark Mode
+- **Seamless Theme Switching**: Quick toggle between high-contrast Dark Mode and crisp Light Mode accessible directly from the dashboard and app bar headers.
+- **Theme Persistence**: Theme preference is automatically saved in local storage (`SharedPreferences`) and reloaded instantly on app startup.
+- **Dynamic Contrast & Adaptivity**: Dialogs, calendar date pickers, cards, and charts adaptively adjust contrast to preserve readability and eye comfort in low-light environments.
 
 ---
 
