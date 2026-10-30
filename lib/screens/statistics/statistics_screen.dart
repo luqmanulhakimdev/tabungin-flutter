@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../models/category_model.dart';
 import '../../models/transaction_type.dart';
 import '../../providers/finance_provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/currency_formatter.dart';
 import '../../widgets/empty_state_widget.dart';
@@ -21,6 +22,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeProvider>();
     return Consumer<FinanceProvider>(
       builder: (context, finance, child) {
         final monthlyIncome = finance.monthlyIncome;
@@ -40,7 +42,28 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         final hasAnyData = monthlyIncome > 0 || monthlyExpense > 0;
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Ringkasan Statistik')),
+          appBar: AppBar(
+            title: const Text('Ringkasan Statistik'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  context.read<ThemeProvider>().toggleTheme();
+                },
+                icon: Icon(
+                  context.watch<ThemeProvider>().isDarkMode
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                  color: context.watch<ThemeProvider>().isDarkMode
+                      ? const Color(0xFFFBBF24)
+                      : AppColors.textSecondary,
+                ),
+                tooltip: context.watch<ThemeProvider>().isDarkMode
+                    ? 'Mode Terang'
+                    : 'Mode Gelap',
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
             child: Column(
@@ -125,7 +148,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Selisih (Arus Kas Bersih)',
                                       style: TextStyle(
                                         fontSize: 12,
@@ -167,7 +190,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   const SizedBox(height: 24),
 
                   // Visual Comparison: Income vs Expense
-                  const Text(
+                  Text(
                     'Perbandingan Arus Kas',
                     style: TextStyle(
                       fontSize: 15,
@@ -183,7 +206,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Distribusi Kategori',
                           style: TextStyle(
@@ -198,8 +221,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          color: AppColors.divider,
+                          color: AppColors.isDarkMode
+                              ? const Color(0xFF0F172A)
+                              : AppColors.divider,
                           borderRadius: BorderRadius.circular(10),
+                          border: AppColors.isDarkMode
+                              ? Border.all(color: AppColors.border, width: 1)
+                              : null,
                         ),
                         child: Row(
                           children: [
@@ -230,7 +258,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       ),
                       child: Text(
                         'Tidak ada ${_activeCategoryTab.label.toLowerCase()} pada bulan ini.',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 13,
                         ),
@@ -297,7 +325,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: AppColors.textSecondary,
@@ -372,7 +400,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   const SizedBox(width: 6),
                   Text(
                     'Pemasukan (${(incomeRatio * 100).toStringAsFixed(1)}%)',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textSecondary,
@@ -393,7 +421,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   const SizedBox(width: 6),
                   Text(
                     'Pengeluaran (${(expenseRatio * 100).toStringAsFixed(1)}%)',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textSecondary,
@@ -413,6 +441,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     required String label,
   }) {
     final isSelected = _activeCategoryTab == type;
+    final isDark = AppColors.isDarkMode;
+
     return InkWell(
       onTap: () {
         setState(() {
@@ -423,12 +453,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected
+              ? (isDark ? const Color(0xFF1E293B) : Colors.white)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
+          border: isSelected && isDark
+              ? Border.all(color: AppColors.border, width: 1)
+              : null,
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
                     blurRadius: 4,
                   ),
                 ]
@@ -481,7 +516,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   children: [
                     Text(
                       category.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
@@ -490,7 +525,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     const SizedBox(height: 2),
                     Text(
                       '$percentString% dari total',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: AppColors.textMuted,
                       ),
@@ -500,7 +535,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               ),
               Text(
                 CurrencyFormatter.format(amount),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,

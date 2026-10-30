@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/transaction_model.dart';
 import '../../providers/finance_provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/currency_formatter.dart';
 import '../../utils/date_formatter.dart';
@@ -44,7 +45,7 @@ class HomeScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Saldo awal digunakan sebagai basis awal perhitungan sebelum ada transaksi.',
                 style: TextStyle(
                   fontSize: 13,
@@ -142,7 +143,7 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             category.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                               color: AppColors.textPrimary,
@@ -277,7 +278,7 @@ class HomeScreen extends StatelessWidget {
           width: 70,
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: AppColors.textMuted,
@@ -288,7 +289,7 @@ class HomeScreen extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -333,7 +334,7 @@ class HomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               DateFormatter.getGreeting(),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.textSecondary,
@@ -351,39 +352,75 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primarySubtle,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: AppColors.primary.withValues(alpha: 0.15),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primary,
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                context.read<ThemeProvider>().toggleTheme();
+                              },
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.card,
                                   shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColors.border,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Icon(
+                                  context.watch<ThemeProvider>().isDarkMode
+                                      ? Icons.light_mode_rounded
+                                      : Icons.dark_mode_rounded,
+                                  size: 18,
+                                  color:
+                                      context.watch<ThemeProvider>().isDarkMode
+                                          ? const Color(0xFFFBBF24)
+                                          : AppColors.textSecondary,
                                 ),
                               ),
-                              const SizedBox(width: 6),
-                              Text(
-                                DateFormatter.formatMonthYear(DateTime.now()),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primarySubtle,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.15,
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    DateFormatter.formatMonthYear(
+                                      DateTime.now(),
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -449,7 +486,7 @@ class HomeScreen extends StatelessWidget {
                                   isSurplus
                                       ? 'Bagus! Pemasukan lebih besar ${CurrencyFormatter.format(netSavings)}'
                                       : 'Perhatian: Pengeluaran melebihi pemasukan ${CurrencyFormatter.format(netSavings.abs())}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 11.5,
                                     color: AppColors.textSecondary,
                                     fontWeight: FontWeight.w400,
@@ -467,7 +504,7 @@ class HomeScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           'Transaksi Terbaru',
                           style: TextStyle(
                             fontSize: 16,

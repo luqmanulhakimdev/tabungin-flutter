@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/theme_provider.dart';
 import '../theme/app_colors.dart';
 import 'home/home_screen.dart';
 import 'statistics/statistics_screen.dart';
@@ -30,6 +32,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeProvider>();
     final screens = [
       HomeScreen(onNavigateToTransactions: () => _onTabSelected(1)),
       const TransactionListScreen(),
@@ -44,7 +47,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: const Icon(Icons.add_rounded, size: 28),
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(top: BorderSide(color: AppColors.border, width: 1)),
         ),
         child: NavigationBar(

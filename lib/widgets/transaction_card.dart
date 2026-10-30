@@ -49,7 +49,7 @@ class TransactionCard extends StatelessWidget {
                 children: [
                   Text(
                     category.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -62,7 +62,7 @@ class TransactionCard extends StatelessWidget {
                     children: [
                       Text(
                         DateFormatter.formatShort(transaction.date),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textMuted,
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -74,7 +74,7 @@ class TransactionCard extends StatelessWidget {
                         Container(
                           width: 3,
                           height: 3,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             color: AppColors.textMuted,
                             shape: BoxShape.circle,
                           ),
@@ -83,7 +83,7 @@ class TransactionCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             transaction.notes!.trim(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 12,
                               fontWeight: FontWeight.w400,

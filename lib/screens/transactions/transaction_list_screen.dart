@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../models/transaction_model.dart';
 import '../../models/transaction_type.dart';
 import '../../providers/finance_provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/currency_formatter.dart';
 import '../../utils/date_formatter.dart';
@@ -68,7 +69,7 @@ class TransactionListScreen extends StatelessWidget {
                         children: [
                           Text(
                             category.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                               color: AppColors.textPrimary,
@@ -193,7 +194,7 @@ class TransactionListScreen extends StatelessWidget {
           width: 70,
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: AppColors.textMuted,
@@ -204,7 +205,7 @@ class TransactionListScreen extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -217,13 +218,35 @@ class TransactionListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeProvider>();
     return Consumer<FinanceProvider>(
       builder: (context, finance, child) {
         final filteredList = finance.filteredTransactions;
         final selectedType = finance.selectedTypeFilter;
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Riwayat Transaksi')),
+          appBar: AppBar(
+            title: const Text('Riwayat Transaksi'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  context.read<ThemeProvider>().toggleTheme();
+                },
+                icon: Icon(
+                  context.watch<ThemeProvider>().isDarkMode
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                  color: context.watch<ThemeProvider>().isDarkMode
+                      ? const Color(0xFFFBBF24)
+                      : AppColors.textSecondary,
+                ),
+                tooltip: context.watch<ThemeProvider>().isDarkMode
+                    ? 'Mode Terang'
+                    : 'Mode Gelap',
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
           body: Column(
             children: [
               // Month Selector Bar & Type Filter Header
@@ -318,6 +341,12 @@ class TransactionListScreen extends StatelessWidget {
     required VoidCallback onTap,
     Color selectedColor = AppColors.primary,
   }) {
+    final isDark = AppColors.isDarkMode;
+    final effectiveColor =
+        isDark && selectedColor == AppColors.primary
+            ? AppColors.primaryLight
+            : selectedColor;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
@@ -326,11 +355,13 @@ class TransactionListScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
           color: isSelected
-              ? selectedColor.withValues(alpha: 0.12)
+              ? (isDark
+                  ? effectiveColor.withValues(alpha: 0.22)
+                  : effectiveColor.withValues(alpha: 0.12))
               : AppColors.card,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? selectedColor : AppColors.border,
+            color: isSelected ? effectiveColor : AppColors.border,
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -339,7 +370,7 @@ class TransactionListScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 12.5,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: isSelected ? selectedColor : AppColors.textSecondary,
+            color: isSelected ? effectiveColor : AppColors.textSecondary,
           ),
         ),
       ),

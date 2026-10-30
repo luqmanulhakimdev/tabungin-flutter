@@ -46,7 +46,7 @@ class MonthSelectorBar extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           'Pilih Bulan',
                           style: TextStyle(
                             fontSize: 18,
@@ -164,14 +164,14 @@ class MonthSelectorBar extends StatelessWidget {
                   const SizedBox(width: 6),
                   Text(
                     DateFormatter.formatMonthYear(selectedMonth),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(
+                  Icon(
                     Icons.keyboard_arrow_down_rounded,
                     size: 16,
                     color: AppColors.textMuted,

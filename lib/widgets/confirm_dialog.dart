@@ -63,7 +63,7 @@ class ConfirmDialog extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
               color: AppColors.textPrimary,
@@ -73,7 +73,7 @@ class ConfirmDialog extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppColors.textSecondary,
               height: 1.4,
@@ -97,7 +97,7 @@ class ConfirmDialog extends StatelessWidget {
                 ),
                 child: Text(
                   cancelLabel,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: AppColors.textSecondary,
                   ),

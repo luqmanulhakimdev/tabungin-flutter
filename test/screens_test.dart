@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabungin_flutter/models/transaction_model.dart';
 import 'package:tabungin_flutter/models/transaction_type.dart';
 import 'package:tabungin_flutter/providers/finance_provider.dart';
+import 'package:tabungin_flutter/providers/theme_provider.dart';
 import 'package:tabungin_flutter/screens/home/home_screen.dart';
 import 'package:tabungin_flutter/screens/main_navigation_screen.dart';
 import 'package:tabungin_flutter/screens/statistics/statistics_screen.dart';
@@ -17,16 +18,21 @@ void main() {
 
   late StorageService storageService;
   late FinanceProvider provider;
+  late ThemeProvider themeProvider;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     storageService = await StorageService.init();
     provider = FinanceProvider(storageService);
+    themeProvider = ThemeProvider(storageService);
   });
 
   Widget buildTestableWidget(Widget child) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: provider)],
+      providers: [
+        ChangeNotifierProvider.value(value: themeProvider),
+        ChangeNotifierProvider.value(value: provider),
+      ],
       child: MaterialApp(home: child),
     );
   }
@@ -213,6 +219,34 @@ void main() {
         expect(find.text('Hapus'), findsOneWidget);
       },
     );
+
+    testWidgets('Toggle Dark Mode and Light Mode updates ThemeProvider', (
+      WidgetTester tester,
+    ) async {
+      setMobileScreen(tester);
+      await tester.pumpWidget(
+        buildTestableWidget(
+          HomeScreen(onNavigateToTransactions: () {}),
+        ),
+      );
+
+      expect(themeProvider.isDarkMode, false);
+      expect(find.byIcon(Icons.dark_mode_rounded), findsOneWidget);
+
+      // Tap dark mode toggle
+      await tester.tap(find.byIcon(Icons.dark_mode_rounded));
+      await tester.pumpAndSettle();
+
+      expect(themeProvider.isDarkMode, true);
+      expect(find.byIcon(Icons.light_mode_rounded), findsOneWidget);
+
+      // Tap again to switch back to light mode
+      await tester.tap(find.byIcon(Icons.light_mode_rounded));
+      await tester.pumpAndSettle();
+
+      expect(themeProvider.isDarkMode, false);
+      expect(find.byIcon(Icons.dark_mode_rounded), findsOneWidget);
+    });
   });
 
   group('TransactionListScreen Tests', () {

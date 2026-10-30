@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabungin_flutter/app.dart';
 import 'package:tabungin_flutter/providers/finance_provider.dart';
+import 'package:tabungin_flutter/providers/theme_provider.dart';
 import 'package:tabungin_flutter/services/storage_service.dart';
 
 void main() {
@@ -13,11 +14,15 @@ void main() {
   ) async {
     SharedPreferences.setMockInitialValues({});
     final storageService = await StorageService.init();
+    final themeProvider = ThemeProvider(storageService);
     final provider = FinanceProvider(storageService);
 
     await tester.pumpWidget(
       MultiProvider(
-        providers: [ChangeNotifierProvider.value(value: provider)],
+        providers: [
+          ChangeNotifierProvider.value(value: themeProvider),
+          ChangeNotifierProvider.value(value: provider),
+        ],
         child: const TabunginApp(),
       ),
     );

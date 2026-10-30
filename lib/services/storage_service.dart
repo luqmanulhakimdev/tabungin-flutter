@@ -62,10 +62,23 @@ class StorageService {
     return await _prefs.setDouble(_initialBalanceKey, balance);
   }
 
+  static const String _themeModeKey = 'tabungin_theme_mode';
+
+  /// Load user's theme mode preference
+  String loadThemeMode() {
+    return _prefs.getString(_themeModeKey) ?? 'light';
+  }
+
+  /// Save user's theme mode preference
+  Future<bool> saveThemeMode(String mode) async {
+    return await _prefs.setString(_themeModeKey, mode);
+  }
+
   /// Clear all persisted data (used for testing and data resets)
   Future<bool> clearAll() async {
     await _prefs.remove(_transactionsKey);
     await _prefs.remove(_initialBalanceKey);
+    await _prefs.remove(_themeModeKey);
     return true;
   }
 }

@@ -6,6 +6,7 @@ import '../../models/category_model.dart';
 import '../../models/transaction_model.dart';
 import '../../models/transaction_type.dart';
 import '../../providers/finance_provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/currency_formatter.dart';
 import '../../utils/date_formatter.dart';
@@ -82,12 +83,24 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
       firstDate: DateTime(2020),
       lastDate: DateTime(2035),
       builder: (context, child) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: Colors.white,
-              onSurface: AppColors.textPrimary,
+            colorScheme: isDark
+                ? const ColorScheme.dark(
+                    primary: AppColors.primaryLight,
+                    onPrimary: Colors.white,
+                    surface: AppColors.darkSurface,
+                    onSurface: AppColors.darkTextPrimary,
+                  )
+                : const ColorScheme.light(
+                    primary: AppColors.primary,
+                    onPrimary: Colors.white,
+                    surface: Colors.white,
+                    onSurface: AppColors.lightTextPrimary,
+                  ),
+            dialogTheme: DialogThemeData(
+              backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
             ),
           ),
           child: child!,
@@ -165,6 +178,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeProvider>();
     final isEditing = widget.isEditing;
     final title = isEditing ? 'Edit Transaksi' : 'Tambah Transaksi';
 
@@ -176,8 +190,9 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 32.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -187,8 +202,13 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: AppColors.divider,
+                  color: AppColors.isDarkMode
+                      ? const Color(0xFF0F172A)
+                      : AppColors.divider,
                   borderRadius: BorderRadius.circular(14),
+                  border: AppColors.isDarkMode
+                      ? Border.all(color: AppColors.border, width: 1)
+                      : null,
                 ),
                 child: Row(
                   children: [
@@ -215,7 +235,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               const SizedBox(height: 24),
 
               // Amount Input Field
-              const Text(
+              Text(
                 'Nominal',
                 style: TextStyle(
                   fontSize: 14,
@@ -228,7 +248,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                 controller: _amountController,
                 keyboardType: TextInputType.number,
                 inputFormatters: [CurrencyInputFormatter()],
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
@@ -265,7 +285,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               const SizedBox(height: 24),
 
               // Category Picker
-              const Text(
+              Text(
                 'Kategori',
                 style: TextStyle(
                   fontSize: 14,
@@ -281,7 +301,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                   crossAxisCount: 4,
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 10,
-                  childAspectRatio: 0.88,
+                  childAspectRatio: 0.78,
                 ),
                 itemCount: _currentCategories.length,
                 itemBuilder: (context, index) {
@@ -308,7 +328,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                       ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 4,
-                        vertical: 8,
+                        vertical: 6,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -328,21 +348,23 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                               size: 18,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            cat.name,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 10.5,
-                              fontWeight: isSelected
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
-                              color: isSelected
-                                  ? AppColors.textPrimary
-                                  : AppColors.textSecondary,
+                          const SizedBox(height: 4),
+                          Flexible(
+                            child: Text(
+                              cat.name,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                                color: isSelected
+                                    ? AppColors.textPrimary
+                                    : AppColors.textSecondary,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -353,7 +375,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               const SizedBox(height: 24),
 
               // Transaction Date
-              const Text(
+              Text(
                 'Tanggal',
                 style: TextStyle(
                   fontSize: 14,
@@ -388,7 +410,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                           const SizedBox(width: 12),
                           Text(
                             DateFormatter.formatWithDay(_selectedDate),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                               color: AppColors.textPrimary,
@@ -396,7 +418,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                           ),
                         ],
                       ),
-                      const Icon(
+                      Icon(
                         Icons.edit_calendar_rounded,
                         size: 18,
                         color: AppColors.textMuted,
@@ -408,7 +430,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               const SizedBox(height: 24),
 
               // Optional Notes
-              const Text(
+              Text(
                 'Catatan (Opsional)',
                 style: TextStyle(
                   fontSize: 14,
@@ -443,11 +465,13 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildTypeButton({
@@ -457,6 +481,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
     required Color color,
   }) {
     final isSelected = _selectedType == type;
+    final isDark = AppColors.isDarkMode;
 
     return InkWell(
       onTap: () => _onTypeChanged(type),
@@ -465,12 +490,17 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected
+              ? (isDark ? const Color(0xFF1E293B) : Colors.white)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
+          border: isSelected && isDark
+              ? Border.all(color: AppColors.border, width: 1)
+              : null,
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
