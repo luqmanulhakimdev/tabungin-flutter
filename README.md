@@ -1,11 +1,17 @@
-# Tabungin — Personal Finance Tracker
+<p align="center">
+  <img src="screenshots/logo.png" width="130" alt="Tabungin App Logo" />
+</p>
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.47.7-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.13.5-0175C2?logo=dart&logoColor=white)](https://dart.dev)
-[![Test Coverage](https://img.shields.io/badge/Coverage-94.13%25-brightgreen)](file:///coverage/lcov.info)
-[![Tests Passed](https://img.shields.io/badge/Tests-44%20Passed-success)]()
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-blue)]()
+<h1 align="center">Tabungin — Personal Finance Tracker</h1>
+
+<p align="center">
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.47.7-02569B?logo=flutter&logoColor=white" alt="Flutter" /></a>
+  <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.13.5-0175C2?logo=dart&logoColor=white" alt="Dart" /></a>
+  <a href="coverage/lcov.info"><img src="https://img.shields.io/badge/Coverage-94.13%25-brightgreen" alt="Coverage" /></a>
+  <img src="https://img.shields.io/badge/Tests-44%20Passed-success" alt="Tests Passed" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License" /></a>
+  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-blue" alt="Platform" />
+</p>
 
 **Tabungin** is a modern, lightweight, and offline-first personal finance tracking mobile application built with **Flutter** and **Dart**. Designed with modern **Material Design 3** aesthetics, robust state management, and an enterprise-grade automated test suite boasting **94.13% code coverage**, Tabungin provides users with an intuitive, clutter-free way to record transactions, monitor cashflow health, and visualize monthly spending patterns.
 
@@ -13,9 +19,15 @@
 
 ## 📱 App Screenshots
 
+### ☀️ Light Mode & Core User Flows
 | Dashboard | Statistics | Add Transaction | Income Form | Expense Form |
 | :---: | :---: | :---: | :---: | :---: |
-| <img src="screenshots/dashboard.jpg" width="180" alt="Dashboard Screen"/> | <img src="screenshots/statistics.jpg" width="180" alt="Statistics Screen"/> | <img src="screenshots/add_transaction.jpg" width="180" alt="Add Transaction Screen"/> | <img src="screenshots/transaction_income.jpg" width="180" alt="Income Form"/> | <img src="screenshots/transaction_expense.jpg" width="180" alt="Expense Form"/> |
+| <img src="screenshots/dashboard.jpg" width="170" alt="Dashboard Screen"/> | <img src="screenshots/statistics.jpg" width="170" alt="Statistics Screen"/> | <img src="screenshots/add_transaction.jpg" width="170" alt="Add Transaction Screen"/> | <img src="screenshots/transaction_income.jpg" width="170" alt="Income Form"/> | <img src="screenshots/transaction_expense.jpg" width="170" alt="Expense Form"/> |
+
+### 🌙 Dark Mode Support
+| Riwayat Transaksi & Month Picker Modal (Dark Mode) |
+| :---: |
+| <img src="screenshots/dark_mode.jpg" width="240" alt="Dark Mode Riwayat Transaksi"/> |
 
 ---
 
