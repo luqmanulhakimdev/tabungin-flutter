@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../localization/app_localizations.dart';
 import '../../models/category_model.dart';
 import '../../models/transaction_model.dart';
 import '../../models/transaction_type.dart';
 import '../../providers/finance_provider.dart';
+import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/currency_formatter.dart';
@@ -116,13 +118,18 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
   }
 
   Future<void> _saveTransaction() async {
+    final isEnglish = Provider.of<LocaleProvider?>(context, listen: false)?.isEnglish ?? false;
     if (!_formKey.currentState!.validate()) return;
 
     final amount = CurrencyFormatter.parse(_amountController.text);
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Nominal transaksi harus lebih dari 0'),
+        SnackBar(
+          content: Text(
+            isEnglish
+                ? 'Transaction amount must be greater than 0'
+                : 'Nominal transaksi harus lebih dari 0',
+          ),
           backgroundColor: AppColors.expense,
         ),
       );
@@ -144,8 +151,12 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Transaksi berhasil diperbarui'),
+          SnackBar(
+            content: Text(
+              isEnglish
+                  ? 'Transaction updated successfully'
+                  : 'Transaksi berhasil diperbarui',
+            ),
             backgroundColor: AppColors.primary,
           ),
         );
@@ -166,8 +177,12 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Transaksi berhasil disimpan'),
+          SnackBar(
+            content: Text(
+              isEnglish
+                  ? 'Transaction saved successfully'
+                  : 'Transaksi berhasil disimpan',
+            ),
             backgroundColor: AppColors.primary,
           ),
         );
@@ -178,9 +193,15 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<ThemeProvider>();
+    context.watch<ThemeProvider?>();
+    final localeProvider = context.watch<LocaleProvider?>();
+    final isEnglish = localeProvider?.isEnglish ?? false;
+    final tr = context.tr;
+
     final isEditing = widget.isEditing;
-    final title = isEditing ? 'Edit Transaksi' : 'Tambah Transaksi';
+    final title = isEditing
+        ? (isEnglish ? 'Edit Transaction' : 'Edit Transaksi')
+        : (isEnglish ? 'Add Transaction' : 'Tambah Transaksi');
 
     return Scaffold(
       appBar: AppBar(
@@ -215,7 +236,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                     Expanded(
                       child: _buildTypeButton(
                         type: TransactionType.expense,
-                        label: 'Pengeluaran',
+                        label: tr.expense,
                         icon: Icons.arrow_upward_rounded,
                         color: AppColors.expense,
                       ),
@@ -224,7 +245,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                     Expanded(
                       child: _buildTypeButton(
                         type: TransactionType.income,
-                        label: 'Pemasukan',
+                        label: tr.income,
                         icon: Icons.arrow_downward_rounded,
                         color: AppColors.income,
                       ),
@@ -236,7 +257,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
               // Amount Input Field
               Text(
-                'Nominal',
+                tr.nominal,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -273,11 +294,11 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Nominal tidak boleh kosong';
+                    return isEnglish ? 'Amount cannot be empty' : 'Nominal tidak boleh kosong';
                   }
                   final parsed = CurrencyFormatter.parse(value);
                   if (parsed <= 0) {
-                    return 'Masukkan nominal yang valid';
+                    return isEnglish ? 'Enter a valid amount' : 'Masukkan nominal yang valid';
                   }
                   return null;
                 },
@@ -286,7 +307,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
               // Category Picker
               Text(
-                'Kategori',
+                tr.category,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -351,7 +372,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                           const SizedBox(height: 4),
                           Flexible(
                             child: Text(
-                              cat.name,
+                              cat.getLocalizedName(isEnglish: isEnglish),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 10.5,
@@ -376,7 +397,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
               // Transaction Date
               Text(
-                'Tanggal',
+                tr.date,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -409,7 +430,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            DateFormatter.formatWithDay(_selectedDate),
+                            DateFormatter.formatWithDay(_selectedDate, isEnglish: isEnglish),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -431,7 +452,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
               // Optional Notes
               Text(
-                'Catatan (Opsional)',
+                tr.noteOptional,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -442,8 +463,10 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               TextFormField(
                 controller: _notesController,
                 maxLines: 2,
-                decoration: const InputDecoration(
-                  hintText: 'Misal: Sarapan bubur ayam di kantor',
+                decoration: InputDecoration(
+                  hintText: isEnglish
+                      ? 'E.g., Breakfast at office'
+                      : 'Misal: Sarapan bubur ayam di kantor',
                 ),
               ),
               const SizedBox(height: 32),
@@ -457,7 +480,9 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: Text(
-                    isEditing ? 'Perbarui Transaksi' : 'Simpan Transaksi',
+                    isEditing
+                        ? (isEnglish ? 'Update Transaction' : 'Perbarui Transaksi')
+                        : (isEnglish ? 'Save Transaction' : 'Simpan Transaksi'),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,

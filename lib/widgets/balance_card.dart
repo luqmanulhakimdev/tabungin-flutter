@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/locale_provider.dart';
 import '../theme/app_colors.dart';
 import '../utils/currency_formatter.dart';
 
@@ -19,6 +21,7 @@ class BalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEnglish = Provider.of<LocaleProvider?>(context)?.isEnglish ?? false;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -92,7 +95,7 @@ class BalanceCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Total Saldo',
+                          isEnglish ? 'Total Balance' : 'Total Saldo',
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.9),
                             fontSize: 13,
@@ -125,7 +128,7 @@ class BalanceCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Saldo Awal',
+                                isEnglish ? 'Initial Balance' : 'Saldo Awal',
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.95),
                                   fontSize: 11,
@@ -185,7 +188,7 @@ class BalanceCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Pemasukan',
+                                    isEnglish ? 'Income' : 'Pemasukan',
                                     style: TextStyle(
                                       color: Colors.white.withValues(
                                         alpha: 0.8,
@@ -244,7 +247,7 @@ class BalanceCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Pengeluaran',
+                                    isEnglish ? 'Expense' : 'Pengeluaran',
                                     style: TextStyle(
                                       color: Colors.white.withValues(
                                         alpha: 0.8,

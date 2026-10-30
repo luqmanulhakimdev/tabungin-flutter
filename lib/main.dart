@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'providers/finance_provider.dart';
+import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
 import 'services/storage_service.dart';
 
@@ -16,6 +17,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider(storageService)),
+        ChangeNotifierProvider(create: (_) => LocaleProvider(storageService)),
         ChangeNotifierProvider(create: (_) => FinanceProvider(storageService)),
       ],
       child: const TabunginApp(),

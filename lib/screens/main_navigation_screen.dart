@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../localization/app_localizations.dart';
+import '../providers/locale_provider.dart';
 import '../providers/theme_provider.dart';
 import '../theme/app_colors.dart';
 import 'home/home_screen.dart';
@@ -32,7 +34,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<ThemeProvider>();
+    context.watch<ThemeProvider?>();
+    context.watch<LocaleProvider?>();
+    final tr = context.tr;
+
     final screens = [
       HomeScreen(onNavigateToTransactions: () => _onTabSelected(1)),
       const TransactionListScreen(),
@@ -43,7 +48,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       body: IndexedStack(index: _currentIndex, children: screens),
       floatingActionButton: FloatingActionButton(
         onPressed: _openAddTransactionScreen,
-        tooltip: 'Tambah Transaksi',
+        tooltip: tr.addTransaction,
         child: const Icon(Icons.add_rounded, size: 28),
       ),
       bottomNavigationBar: Container(
@@ -53,21 +58,21 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: NavigationBar(
           selectedIndex: _currentIndex,
           onDestinationSelected: _onTabSelected,
-          destinations: const [
+          destinations: [
             NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded),
-              label: 'Beranda',
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: const Icon(Icons.home_rounded),
+              label: tr.navHome,
             ),
             NavigationDestination(
-              icon: Icon(Icons.receipt_long_outlined),
-              selectedIcon: Icon(Icons.receipt_long_rounded),
-              label: 'Transaksi',
+              icon: const Icon(Icons.receipt_long_outlined),
+              selectedIcon: const Icon(Icons.receipt_long_rounded),
+              label: tr.navTransactions,
             ),
             NavigationDestination(
-              icon: Icon(Icons.pie_chart_outline_rounded),
-              selectedIcon: Icon(Icons.pie_chart_rounded),
-              label: 'Statistik',
+              icon: const Icon(Icons.pie_chart_outline_rounded),
+              selectedIcon: const Icon(Icons.pie_chart_rounded),
+              label: tr.navStatistics,
             ),
           ],
         ),

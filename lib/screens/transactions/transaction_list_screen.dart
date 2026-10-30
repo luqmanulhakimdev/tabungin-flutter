@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../localization/app_localizations.dart';
 import '../../models/transaction_model.dart';
 import '../../models/transaction_type.dart';
 import '../../providers/finance_provider.dart';
+import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/currency_formatter.dart';
@@ -22,6 +24,9 @@ class TransactionListScreen extends StatelessWidget {
     TransactionModel transaction,
     FinanceProvider provider,
   ) {
+    final tr = context.tr;
+    final isEnglish = Provider.of<LocaleProvider?>(context, listen: false)?.isEnglish ?? false;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -68,7 +73,7 @@ class TransactionListScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            category.name,
+                            category.getLocalizedName(isEnglish: isEnglish),
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -77,7 +82,7 @@ class TransactionListScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            transaction.type.label,
+                            transaction.type.getLabel(isEnglish: isEnglish),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -104,18 +109,18 @@ class TransactionListScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 _buildInfoRow(
                   icon: Icons.calendar_today_rounded,
-                  label: 'Tanggal',
-                  value: DateFormatter.formatWithDay(transaction.date),
+                  label: tr.date,
+                  value: DateFormatter.formatWithDay(transaction.date, isEnglish: isEnglish),
                 ),
                 const SizedBox(height: 12),
                 _buildInfoRow(
                   icon: Icons.notes_rounded,
-                  label: 'Catatan',
+                  label: isEnglish ? 'Note' : 'Catatan',
                   value:
                       (transaction.notes != null &&
                           transaction.notes!.trim().isNotEmpty)
                       ? transaction.notes!.trim()
-                      : 'Tidak ada catatan',
+                      : (isEnglish ? 'No notes' : 'Tidak ada catatan'),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -133,7 +138,7 @@ class TransactionListScreen extends StatelessWidget {
                           );
                         },
                         icon: const Icon(Icons.edit_rounded, size: 16),
-                        label: const Text('Edit Transaksi'),
+                        label: Text(isEnglish ? 'Edit Transaction' : 'Edit Transaksi'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -141,19 +146,23 @@ class TransactionListScreen extends StatelessWidget {
                       child: ElevatedButton.icon(
                         onPressed: () async {
                           Navigator.of(context).pop();
+                          final catName = category.getLocalizedName(isEnglish: isEnglish);
                           final confirmed = await ConfirmDialog.show(
                             context,
-                            title: 'Hapus Transaksi?',
-                            message:
-                                'Transaksi ${category.name} sebesar ${CurrencyFormatter.format(transaction.amount)} akan dihapus permanen.',
+                            title: isEnglish ? 'Delete Transaction?' : 'Hapus Transaksi?',
+                            message: isEnglish
+                                ? 'Transaction $catName of ${CurrencyFormatter.format(transaction.amount)} will be permanently deleted.'
+                                : 'Transaksi $catName sebesar ${CurrencyFormatter.format(transaction.amount)} akan dihapus permanen.',
+                            confirmLabel: tr.delete,
+                            cancelLabel: tr.cancel,
                           );
 
                           if (confirmed == true) {
                             await provider.deleteTransaction(transaction.id);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Transaksi berhasil dihapus'),
+                                SnackBar(
+                                  content: Text(tr.transactionDeleted),
                                   backgroundColor: AppColors.primary,
                                 ),
                               );
@@ -164,7 +173,7 @@ class TransactionListScreen extends StatelessWidget {
                           Icons.delete_outline_rounded,
                           size: 16,
                         ),
-                        label: const Text('Hapus'),
+                        label: Text(tr.delete),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.expense,
                         ),
@@ -218,7 +227,11 @@ class TransactionListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<ThemeProvider>();
+    context.watch<ThemeProvider?>();
+    final localeProvider = context.watch<LocaleProvider?>();
+    final isEnglish = localeProvider?.isEnglish ?? false;
+    final tr = context.tr;
+
     return Consumer<FinanceProvider>(
       builder: (context, finance, child) {
         final filteredList = finance.filteredTransactions;
@@ -226,8 +239,49 @@ class TransactionListScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Riwayat Transaksi'),
+            title: Text(tr.transactionHistory),
             actions: [
+              // Language switch button
+              InkWell(
+                onTap: () {
+                  context.read<LocaleProvider?>()?.toggleLocale();
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.card,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: AppColors.border,
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.language_rounded,
+                        size: 15,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        isEnglish ? 'EN' : 'ID',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
               IconButton(
                 onPressed: () {
                   context.read<ThemeProvider>().toggleTheme();
@@ -241,8 +295,8 @@ class TransactionListScreen extends StatelessWidget {
                       : AppColors.textSecondary,
                 ),
                 tooltip: context.watch<ThemeProvider>().isDarkMode
-                    ? 'Mode Terang'
-                    : 'Mode Gelap',
+                    ? (isEnglish ? 'Light Mode' : 'Mode Terang')
+                    : (isEnglish ? 'Dark Mode' : 'Mode Gelap'),
               ),
               const SizedBox(width: 8),
             ],
@@ -266,13 +320,13 @@ class TransactionListScreen extends StatelessWidget {
                     Row(
                       children: [
                         _buildFilterChip(
-                          label: 'Semua',
+                          label: tr.all,
                           isSelected: selectedType == null,
                           onTap: () => finance.setTypeFilter(null),
                         ),
                         const SizedBox(width: 8),
                         _buildFilterChip(
-                          label: 'Pemasukan',
+                          label: tr.income,
                           isSelected: selectedType == TransactionType.income,
                           onTap: () =>
                               finance.setTypeFilter(TransactionType.income),
@@ -280,7 +334,7 @@ class TransactionListScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         _buildFilterChip(
-                          label: 'Pengeluaran',
+                          label: tr.expense,
                           isSelected: selectedType == TransactionType.expense,
                           onTap: () =>
                               finance.setTypeFilter(TransactionType.expense),
@@ -297,9 +351,11 @@ class TransactionListScreen extends StatelessWidget {
                 child: filteredList.isEmpty
                     ? Center(
                         child: EmptyStateWidget(
-                          title: 'Tidak Ada Transaksi',
-                          message: 'Tidak ada transaksi yang cocok untuk periode dan filter yang dipilih.',
-                          buttonLabel: 'Tambah Transaksi',
+                          title: isEnglish ? 'No Transactions' : 'Tidak Ada Transaksi',
+                          message: isEnglish
+                              ? 'No transactions match the selected period and filter.'
+                              : 'Tidak ada transaksi yang cocok untuk periode dan filter yang dipilih.',
+                          buttonLabel: tr.addTransaction,
                           onButtonPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(

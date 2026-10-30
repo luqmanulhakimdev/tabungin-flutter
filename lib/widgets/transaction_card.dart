@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/transaction_model.dart';
+import '../providers/locale_provider.dart';
 import '../theme/app_colors.dart';
 import '../utils/currency_formatter.dart';
 import '../utils/date_formatter.dart';
@@ -13,6 +15,7 @@ class TransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEnglish = Provider.of<LocaleProvider?>(context)?.isEnglish ?? false;
     final category = transaction.category;
     final isIncome = transaction.isIncome;
     final amountColor = isIncome ? AppColors.income : AppColors.expense;
@@ -48,7 +51,7 @@ class TransactionCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    category.name,
+                    category.getLocalizedName(isEnglish: isEnglish),
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 14,
@@ -61,7 +64,7 @@ class TransactionCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        DateFormatter.formatShort(transaction.date),
+                        DateFormatter.formatShort(transaction.date, isEnglish: isEnglish),
                         style: TextStyle(
                           color: AppColors.textMuted,
                           fontSize: 12,
@@ -125,7 +128,7 @@ class TransactionCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    transaction.type.label,
+                    transaction.type.getLabel(isEnglish: isEnglish),
                     style: TextStyle(
                       color: amountColor,
                       fontSize: 10,

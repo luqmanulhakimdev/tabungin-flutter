@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../localization/app_localizations.dart';
 import '../../models/category_model.dart';
 import '../../models/transaction_type.dart';
 import '../../providers/finance_provider.dart';
+import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/currency_formatter.dart';
@@ -22,7 +24,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<ThemeProvider>();
+    context.watch<ThemeProvider?>();
+    final localeProvider = context.watch<LocaleProvider?>();
+    final isEnglish = localeProvider?.isEnglish ?? false;
+    final tr = context.tr;
+
     return Consumer<FinanceProvider>(
       builder: (context, finance, child) {
         final monthlyIncome = finance.monthlyIncome;
@@ -43,8 +49,49 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Ringkasan Statistik'),
+            title: Text(tr.statisticsSummary),
             actions: [
+              // Language switch button
+              InkWell(
+                onTap: () {
+                  context.read<LocaleProvider?>()?.toggleLocale();
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.card,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: AppColors.border,
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.language_rounded,
+                        size: 15,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        isEnglish ? 'EN' : 'ID',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
               IconButton(
                 onPressed: () {
                   context.read<ThemeProvider>().toggleTheme();
@@ -58,8 +105,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       : AppColors.textSecondary,
                 ),
                 tooltip: context.watch<ThemeProvider>().isDarkMode
-                    ? 'Mode Terang'
-                    : 'Mode Gelap',
+                    ? (isEnglish ? 'Light Mode' : 'Mode Terang')
+                    : (isEnglish ? 'Dark Mode' : 'Mode Gelap'),
               ),
               const SizedBox(width: 8),
             ],
@@ -80,8 +127,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
                 if (!hasAnyData)
                   EmptyStateWidget(
-                    title: 'Belum Ada Data Statistik',
-                    message: 'Tidak ada catatan keuangan pada bulan yang dipilih. Tambahkan transaksi untuk melihat analisis grafis.',
+                    title: isEnglish ? 'No Financial Analytics Yet' : 'Belum Ada Data Statistik',
+                    message: isEnglish
+                        ? 'No financial records for the selected month. Add transactions to see graphical insights.'
+                        : 'Tidak ada catatan keuangan pada bulan yang dipilih. Tambahkan transaksi untuk melihat analisis grafis.',
                     icon: Icons.bar_chart_rounded,
                   )
                 else ...[
@@ -90,7 +139,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     children: [
                       Expanded(
                         child: _buildSummaryMetricCard(
-                          title: 'Pemasukan',
+                          title: tr.income,
                           amount: monthlyIncome,
                           color: AppColors.income,
                           icon: Icons.arrow_downward_rounded,
@@ -100,7 +149,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildSummaryMetricCard(
-                          title: 'Pengeluaran',
+                          title: tr.expense,
                           amount: monthlyExpense,
                           color: AppColors.expense,
                           icon: Icons.arrow_upward_rounded,
@@ -149,7 +198,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Selisih (Arus Kas Bersih)',
+                                      tr.netCashflow,
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
@@ -158,7 +207,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      isSurplus ? 'Surplus / Hemat' : 'Defisit',
+                                      isSurplus ? tr.surplusSaved : (isEnglish ? 'Deficit' : 'Defisit'),
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600,
@@ -191,7 +240,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
                   // Visual Comparison: Income vs Expense
                   Text(
-                    'Perbandingan Arus Kas',
+                    tr.cashflowComparison,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -199,7 +248,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  _buildComparisonBar(monthlyIncome, monthlyExpense),
+                  _buildComparisonBar(monthlyIncome, monthlyExpense, isEnglish: isEnglish),
                   const SizedBox(height: 28),
 
                   // Category Breakdown Header & Toggle
@@ -208,7 +257,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Distribusi Kategori',
+                          tr.categoryDistribution,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
@@ -233,11 +282,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           children: [
                             _buildToggleOption(
                               type: TransactionType.expense,
-                              label: 'Pengeluaran',
+                              label: tr.expense,
                             ),
                             _buildToggleOption(
                               type: TransactionType.income,
-                              label: 'Pemasukan',
+                              label: tr.income,
                             ),
                           ],
                         ),
@@ -257,7 +306,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         border: Border.all(color: AppColors.border),
                       ),
                       child: Text(
-                        'Tidak ada ${_activeCategoryTab.label.toLowerCase()} pada bulan ini.',
+                        isEnglish
+                            ? 'No ${_activeCategoryTab.getLabel(isEnglish: true).toLowerCase()} recorded this month.'
+                            : 'Tidak ada ${_activeCategoryTab.label.toLowerCase()} pada bulan ini.',
                         style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 13,
@@ -283,6 +334,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           category: category,
                           amount: amount,
                           percentage: percentage,
+                          isEnglish: isEnglish,
                         );
                       },
                     ),
@@ -349,7 +401,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildComparisonBar(double income, double expense) {
+  Widget _buildComparisonBar(double income, double expense, {bool isEnglish = false}) {
     final total = income + expense;
     final incomeRatio = total > 0 ? (income / total) : 0.5;
     final expenseRatio = total > 0 ? (expense / total) : 0.5;
@@ -399,7 +451,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'Pemasukan (${(incomeRatio * 100).toStringAsFixed(1)}%)',
+                    '${isEnglish ? 'Income' : 'Pemasukan'} (${(incomeRatio * 100).toStringAsFixed(1)}%)',
                     style: TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w600,
@@ -420,7 +472,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'Pengeluaran (${(expenseRatio * 100).toStringAsFixed(1)}%)',
+                    '${isEnglish ? 'Expense' : 'Pengeluaran'} (${(expenseRatio * 100).toStringAsFixed(1)}%)',
                     style: TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w600,
@@ -485,6 +537,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     required CategoryModel category,
     required double amount,
     required double percentage,
+    bool isEnglish = false,
   }) {
     final percentString = (percentage * 100).toStringAsFixed(1);
 
@@ -515,7 +568,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      category.name,
+                      category.getLocalizedName(isEnglish: isEnglish),
                       style: TextStyle(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w700,
@@ -524,7 +577,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$percentString% dari total',
+                      '$percentString% ${isEnglish ? 'of total' : 'dari total'}',
                       style: TextStyle(
                         fontSize: 11,
                         color: AppColors.textMuted,

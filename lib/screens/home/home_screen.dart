@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../localization/app_localizations.dart';
 import '../../models/transaction_model.dart';
 import '../../providers/finance_provider.dart';
+import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/currency_formatter.dart';
@@ -27,17 +29,20 @@ class HomeScreen extends StatelessWidget {
           : '',
     );
 
+    final tr = context.tr;
+    final isEnglish = Provider.of<LocaleProvider?>(context, listen: false)?.isEnglish ?? false;
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.tune_rounded, color: AppColors.primary, size: 22),
-              SizedBox(width: 8),
+              const Icon(Icons.tune_rounded, color: AppColors.primary, size: 22),
+              const SizedBox(width: 8),
               Text(
-                'Atur Saldo Awal',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                tr.setInitialBalance,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -46,7 +51,7 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Saldo awal digunakan sebagai basis awal perhitungan sebelum ada transaksi.',
+                tr.initialBalanceDesc,
                 style: TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,
@@ -69,7 +74,7 @@ class HomeScreen extends StatelessWidget {
           actions: [
             OutlinedButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Batal'),
+              child: Text(tr.cancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -77,13 +82,17 @@ class HomeScreen extends StatelessWidget {
                 provider.updateInitialBalance(balance);
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Saldo awal berhasil diperbarui'),
+                  SnackBar(
+                    content: Text(
+                      isEnglish
+                          ? 'Initial balance updated successfully'
+                          : 'Saldo awal berhasil diperbarui',
+                    ),
                     backgroundColor: AppColors.primary,
                   ),
                 );
               },
-              child: const Text('Simpan'),
+              child: Text(tr.save),
             ),
           ],
         );
@@ -96,6 +105,9 @@ class HomeScreen extends StatelessWidget {
     TransactionModel transaction,
     FinanceProvider provider,
   ) {
+    final tr = context.tr;
+    final isEnglish = Provider.of<LocaleProvider?>(context, listen: false)?.isEnglish ?? false;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -142,7 +154,7 @@ class HomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            category.name,
+                            category.getLocalizedName(isEnglish: isEnglish),
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -151,7 +163,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            transaction.type.label,
+                            transaction.type.getLabel(isEnglish: isEnglish),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -177,18 +189,18 @@ class HomeScreen extends StatelessWidget {
                 const Divider(),
                 const SizedBox(height: 16),
                 _buildDetailRow(
-                  label: 'Tanggal',
-                  value: DateFormatter.formatWithDay(transaction.date),
+                  label: tr.date,
+                  value: DateFormatter.formatWithDay(transaction.date, isEnglish: isEnglish),
                   icon: Icons.calendar_today_rounded,
                 ),
                 const SizedBox(height: 12),
                 _buildDetailRow(
-                  label: 'Catatan',
+                  label: isEnglish ? 'Note' : 'Catatan',
                   value:
                       (transaction.notes != null &&
                           transaction.notes!.trim().isNotEmpty)
                       ? transaction.notes!.trim()
-                      : 'Tidak ada catatan',
+                      : (isEnglish ? 'No notes' : 'Tidak ada catatan'),
                   icon: Icons.notes_rounded,
                 ),
                 const SizedBox(height: 24),
@@ -207,7 +219,7 @@ class HomeScreen extends StatelessWidget {
                           );
                         },
                         icon: const Icon(Icons.edit_rounded, size: 16),
-                        label: const Text('Edit'),
+                        label: Text(tr.edit),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -218,15 +230,13 @@ class HomeScreen extends StatelessWidget {
                           final confirmed = await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Hapus Transaksi?'),
-                              content: const Text(
-                                'Transaksi yang dihapus tidak dapat dikembalikan. Yakin ingin menghapus?',
-                              ),
+                              title: Text(isEnglish ? 'Delete Transaction?' : 'Hapus Transaksi?'),
+                              content: Text(tr.deleteTransactionConfirm),
                               actions: [
                                 OutlinedButton(
                                   onPressed: () =>
                                       Navigator.of(context).pop(false),
-                                  child: const Text('Batal'),
+                                  child: Text(tr.cancel),
                                 ),
                                 ElevatedButton(
                                   onPressed: () =>
@@ -234,7 +244,7 @@ class HomeScreen extends StatelessWidget {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.expense,
                                   ),
-                                  child: const Text('Hapus'),
+                                  child: Text(tr.delete),
                                 ),
                               ],
                             ),
@@ -248,7 +258,7 @@ class HomeScreen extends StatelessWidget {
                           Icons.delete_outline_rounded,
                           size: 16,
                         ),
-                        label: const Text('Hapus'),
+                        label: Text(tr.delete),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.expense,
                         ),
@@ -308,6 +318,8 @@ class HomeScreen extends StatelessWidget {
         final hasTransactions = finance.allTransactions.isNotEmpty;
         final netSavings = finance.monthlyNetSavings;
         final isSurplus = netSavings >= 0;
+        final tr = context.tr;
+        final isEnglish = context.watch<LocaleProvider?>()?.isEnglish ?? false;
 
         return Scaffold(
           body: SafeArea(
@@ -333,7 +345,7 @@ class HomeScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              DateFormatter.getGreeting(),
+                              DateFormatter.getGreeting(isEnglish: isEnglish),
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
@@ -354,6 +366,48 @@ class HomeScreen extends StatelessWidget {
                         ),
                         Row(
                           children: [
+                            // Language switcher
+                            InkWell(
+                              onTap: () {
+                                context.read<LocaleProvider?>()?.toggleLocale();
+                              },
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 9,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.card,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: AppColors.border,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.language_rounded,
+                                      size: 15,
+                                      color: AppColors.primary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      isEnglish ? 'EN' : 'ID',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            // Theme toggle
                             InkWell(
                               onTap: () {
                                 context.read<ThemeProvider>().toggleTheme();
@@ -410,6 +464,7 @@ class HomeScreen extends StatelessWidget {
                                   Text(
                                     DateFormatter.formatMonthYear(
                                       DateTime.now(),
+                                      isEnglish: isEnglish,
                                     ),
                                     style: const TextStyle(
                                       fontSize: 12,
@@ -471,8 +526,8 @@ class HomeScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   isSurplus
-                                      ? 'Arus Kas Bersih (Surplus)'
-                                      : 'Arus Kas Bersih (Defisit)',
+                                      ? tr.cashflowSurplus
+                                      : tr.cashflowDeficit,
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -484,8 +539,8 @@ class HomeScreen extends StatelessWidget {
                                 const SizedBox(height: 2),
                                 Text(
                                   isSurplus
-                                      ? 'Bagus! Pemasukan lebih besar ${CurrencyFormatter.format(netSavings)}'
-                                      : 'Perhatian: Pengeluaran melebihi pemasukan ${CurrencyFormatter.format(netSavings.abs())}',
+                                      ? tr.surplusMessage(CurrencyFormatter.format(netSavings))
+                                      : tr.deficitMessage(CurrencyFormatter.format(netSavings.abs())),
                                   style: TextStyle(
                                     fontSize: 11.5,
                                     color: AppColors.textSecondary,
@@ -505,7 +560,7 @@ class HomeScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Transaksi Terbaru',
+                          tr.recentTransactions,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -522,17 +577,17 @@ class HomeScreen extends StatelessWidget {
                                 horizontal: 6,
                               ),
                             ),
-                            child: const Row(
+                            child: Row(
                               children: [
                                 Text(
-                                  'Lihat Semua',
-                                  style: TextStyle(
+                                  tr.viewAll,
+                                  style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                SizedBox(width: 2),
-                                Icon(Icons.arrow_forward_rounded, size: 14),
+                                const SizedBox(width: 2),
+                                const Icon(Icons.arrow_forward_rounded, size: 14),
                               ],
                             ),
                           ),
@@ -543,9 +598,9 @@ class HomeScreen extends StatelessWidget {
                     // Recent Transactions List or Empty State
                     if (!hasTransactions)
                       EmptyStateWidget(
-                        title: 'Belum Ada Transaksi',
-                        message: 'Catat pemasukan atau pengeluaran pertamamu untuk mulai memantau keuangan.',
-                        buttonLabel: 'Tambah Transaksi',
+                        title: tr.noTransactionsYet,
+                        message: tr.noTransactionsDesc,
+                        buttonLabel: tr.addTransaction,
                         onButtonPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(

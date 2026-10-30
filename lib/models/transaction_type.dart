@@ -6,7 +6,17 @@ enum TransactionType {
   income,
   expense;
 
-  String get label {
+  String get label => getLabel(isEnglish: false);
+
+  String getLabel({bool isEnglish = false}) {
+    if (isEnglish) {
+      switch (this) {
+        case TransactionType.income:
+          return 'Income';
+        case TransactionType.expense:
+          return 'Expense';
+      }
+    }
     switch (this) {
       case TransactionType.income:
         return 'Pemasukan';

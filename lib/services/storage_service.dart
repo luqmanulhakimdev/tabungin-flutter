@@ -74,11 +74,24 @@ class StorageService {
     return await _prefs.setString(_themeModeKey, mode);
   }
 
+  static const String _languageCodeKey = 'tabungin_language_code';
+
+  /// Load user's language code preference ('id' or 'en')
+  String loadLanguageCode() {
+    return _prefs.getString(_languageCodeKey) ?? 'id';
+  }
+
+  /// Save user's language code preference
+  Future<bool> saveLanguageCode(String code) async {
+    return await _prefs.setString(_languageCodeKey, code);
+  }
+
   /// Clear all persisted data (used for testing and data resets)
   Future<bool> clearAll() async {
     await _prefs.remove(_transactionsKey);
     await _prefs.remove(_initialBalanceKey);
     await _prefs.remove(_themeModeKey);
+    await _prefs.remove(_languageCodeKey);
     return true;
   }
 }

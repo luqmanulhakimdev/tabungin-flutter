@@ -26,6 +26,41 @@ class CategoryModel {
     return getById(id);
   }
 
+  /// Get localized category name based on active language
+  String getLocalizedName({bool isEnglish = false}) {
+    if (!isEnglish) return name;
+    switch (id) {
+      case 'exp_food':
+        return 'Food & Beverage';
+      case 'exp_transport':
+        return 'Transportation';
+      case 'exp_shopping':
+        return 'Shopping';
+      case 'exp_bills':
+        return 'Bills';
+      case 'exp_entertainment':
+        return 'Entertainment';
+      case 'exp_health':
+        return 'Healthcare';
+      case 'exp_education':
+        return 'Education';
+      case 'exp_other':
+        return 'Others';
+      case 'inc_salary':
+        return 'Salary';
+      case 'inc_freelance':
+        return 'Freelance';
+      case 'inc_business':
+        return 'Business';
+      case 'inc_gift':
+        return 'Gift';
+      case 'inc_other':
+        return 'Others';
+      default:
+        return name;
+    }
+  }
+
   /// Default expense categories
   static const List<CategoryModel> defaultExpenseCategories = [
     CategoryModel(

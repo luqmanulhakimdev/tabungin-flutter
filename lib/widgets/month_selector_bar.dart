@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/locale_provider.dart';
 import '../theme/app_colors.dart';
 import '../utils/date_formatter.dart';
 
@@ -18,6 +20,7 @@ class MonthSelectorBar extends StatelessWidget {
   });
 
   void _showMonthPicker(BuildContext context) {
+    final isEnglish = Provider.of<LocaleProvider?>(context, listen: false)?.isEnglish ?? false;
     final currentYear = selectedMonth.year;
     showModalBottomSheet(
       context: context,
@@ -47,7 +50,7 @@ class MonthSelectorBar extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Pilih Bulan',
+                          isEnglish ? 'Select Month' : 'Pilih Bulan',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
@@ -103,7 +106,7 @@ class MonthSelectorBar extends StatelessWidget {
                             ),
                             alignment: Alignment.center,
                             child: Text(
-                              DateFormatter.formatMonthYear(date).split(' ')[0],
+                              DateFormatter.formatMonthYear(date, isEnglish: isEnglish).split(' ')[0],
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: isSelected
@@ -130,6 +133,8 @@ class MonthSelectorBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEnglish = Provider.of<LocaleProvider?>(context)?.isEnglish ?? false;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -145,7 +150,7 @@ class MonthSelectorBar extends StatelessWidget {
             icon: const Icon(Icons.chevron_left_rounded),
             color: AppColors.textPrimary,
             iconSize: 22,
-            tooltip: 'Bulan Sebelumnya',
+            tooltip: isEnglish ? 'Previous Month' : 'Bulan Sebelumnya',
             constraints: const BoxConstraints(),
             padding: const EdgeInsets.all(6),
           ),
@@ -163,7 +168,7 @@ class MonthSelectorBar extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    DateFormatter.formatMonthYear(selectedMonth),
+                    DateFormatter.formatMonthYear(selectedMonth, isEnglish: isEnglish),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
@@ -185,7 +190,7 @@ class MonthSelectorBar extends StatelessWidget {
             icon: const Icon(Icons.chevron_right_rounded),
             color: AppColors.textPrimary,
             iconSize: 22,
-            tooltip: 'Bulan Selanjutnya',
+            tooltip: isEnglish ? 'Next Month' : 'Bulan Selanjutnya',
             constraints: const BoxConstraints(),
             padding: const EdgeInsets.all(6),
           ),

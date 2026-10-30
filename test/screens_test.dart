@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabungin_flutter/models/transaction_model.dart';
 import 'package:tabungin_flutter/models/transaction_type.dart';
 import 'package:tabungin_flutter/providers/finance_provider.dart';
+import 'package:tabungin_flutter/providers/locale_provider.dart';
 import 'package:tabungin_flutter/providers/theme_provider.dart';
 import 'package:tabungin_flutter/screens/home/home_screen.dart';
 import 'package:tabungin_flutter/screens/main_navigation_screen.dart';
@@ -19,12 +20,14 @@ void main() {
   late StorageService storageService;
   late FinanceProvider provider;
   late ThemeProvider themeProvider;
+  late LocaleProvider localeProvider;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     storageService = await StorageService.init();
     provider = FinanceProvider(storageService);
     themeProvider = ThemeProvider(storageService);
+    localeProvider = LocaleProvider(storageService);
   });
 
   Widget buildTestableWidget(Widget child) {
@@ -32,6 +35,7 @@ void main() {
       providers: [
         ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider.value(value: provider),
+        ChangeNotifierProvider.value(value: localeProvider),
       ],
       child: MaterialApp(home: child),
     );

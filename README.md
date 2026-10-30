@@ -8,7 +8,7 @@
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.47.7-02569B?logo=flutter&logoColor=white" alt="Flutter" /></a>
   <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.13.5-0175C2?logo=dart&logoColor=white" alt="Dart" /></a>
   <a href="coverage/lcov.info"><img src="https://img.shields.io/badge/Coverage-94.13%25-brightgreen" alt="Coverage" /></a>
-  <img src="https://img.shields.io/badge/Tests-44%20Passed-success" alt="Tests Passed" />
+  <img src="https://img.shields.io/badge/Tests-52%20Passed-success" alt="Tests Passed" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License" /></a>
   <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-blue" alt="Platform" />
 </p>
@@ -42,6 +42,7 @@
   - [4. Financial Analytics & Statistics](#4-financial-analytics--statistics)
   - [5. Unified Navigation](#5-unified-navigation)
   - [6. Light & Dark Mode](#6-light--dark-mode)
+  - [7. Bilingual Support (Bahasa Indonesia & English)](#7-bilingual-support-bahasa-indonesia--english)
 - [Architecture & Technical Decisions](#-architecture--technical-decisions)
 - [Project Directory Structure](#-project-directory-structure)
 - [Automated Testing & Coverage Report (94.13%)](#-automated-testing--coverage-report-9413)
@@ -131,6 +132,11 @@ The application's visual identity centers around **Emerald Green**, instilling t
 - **Seamless Theme Switching**: Quick toggle between high-contrast Dark Mode and crisp Light Mode accessible directly from the dashboard and app bar headers.
 - **Theme Persistence**: Theme preference is automatically saved in local storage (`SharedPreferences`) and reloaded instantly on app startup.
 - **Dynamic Contrast & Adaptivity**: Dialogs, calendar date pickers, cards, and charts adaptively adjust contrast to preserve readability and eye comfort in low-light environments.
+
+### 7. Bilingual Support (Bahasa Indonesia & English)
+- **Instant Language Switching**: Toggle between Indonesian (`ID`) and English (`EN`) with a single tap in the app header across all primary screens.
+- **Full App Translation**: Comprehensive localization covering navigation items, greetings, cards, transaction types, categories, date pickers, analytics metrics, and confirmation dialogs.
+- **Persistent Locale Preference**: User language choice is automatically remembered on-device via `StorageService` across app relaunches.
 
 ---
 
